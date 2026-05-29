@@ -301,6 +301,65 @@
   .step-row.status-fail { background: var(--red-bg); }
   .step-row.status-partial { background: var(--orange-bg); }
 
+  /* Flow general notes */
+  .flow-notes {
+    margin-bottom: 16px;
+    padding: 12px;
+    background: #f8f6f0;
+    border: 1px solid #e8e2d0;
+    border-radius: 8px;
+    border-left: 4px solid var(--brass);
+  }
+  .flow-notes-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .flow-notes-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .flow-notes-badge {
+    font-size: 11px;
+    color: var(--brass);
+    font-weight: 600;
+  }
+  .flow-notes textarea {
+    width: 100%;
+    border: 1px solid #d4c48f;
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 13px;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 80px;
+    background: white;
+    line-height: 1.5;
+  }
+  .flow-notes textarea:focus { outline: none; border-color: var(--brass); }
+  .flow-notes-hint {
+    font-size: 11px;
+    color: var(--gray);
+    margin-top: 4px;
+  }
+
+  /* To-document badge */
+  .badge-todoc {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    color: #7c3aed;
+    background: #ede9fe;
+    padding: 1px 6px;
+    border-radius: 4px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+
   /* Toast */
   .toast {
     position: fixed;
@@ -415,7 +474,7 @@ const FLOWS = [
     sections: [
       { title: null, steps: [
         { action: "Naviguer vers /back-office", expected: "La page du dashboard se charge sans erreur" },
-        { action: "Vérifier la sidebar gauche", expected: "Sidebar dark (navy) avec les liens : Dashboard, Commandes, Production, Catalogue, Clients, Messages, Stock, Statistiques, Configuration, Utilisateurs" },
+        { action: "Vérifier la sidebar gauche", expected: "Sidebar dark (navy) avec les liens : Tableau de bord, Commandes, Production, Catalogue, Clients, Messagerie, Stock, Codes Promo, Revendeurs, Paiements, Audit Wallet, Statistiques, Configuration, Utilisateurs, Aide. Vérifier aussi : nom utilisateur connecté en bas + lien Retour espace client" },
         { action: "Vérifier les badges sidebar", expected: "Badges numériques sur Commandes, Production, Clients, Messages, Stock (si données disponibles)" },
         { action: "Vérifier le bloc \"Urgences\"", expected: "Nombre de commandes urgentes aujourd'hui / demain / en retard affiché" },
         { action: "Vérifier le bloc \"CA\"", expected: "CA du jour, de la semaine, du mois avec deltas en %" },
@@ -507,6 +566,23 @@ const FLOWS = [
       { title: "Notes internes", steps: [
         { action: "Ajouter une note interne (non visible client)", expected: "Note apparaît dans la timeline" },
         { action: "Ajouter une note visible client", expected: "Checkbox \"Visible par le client\" cochée → placeholder change → note enregistrée" },
+      ]},
+      { title: "⚠ Section \"Production · Avancement\" — À DOCUMENTER", steps: [
+        { action: "Vérifier la présence de la section Production · Avancement", expected: "Section visible avec barre de progression globale et détail par article (quantité traitée / totale, %). ⚠ À DOCUMENTER : comportement attendu, interactions possibles, lien avec le pipeline production" },
+      ]},
+      { title: "⚠ Section \"Paiements\" (sidebar) — À DOCUMENTER", steps: [
+        { action: "Vérifier la présence de la section Paiements dans la sidebar", expected: "Section visible avec historique des paiements ou mention \"Aucun paiement enregistré\". ⚠ À DOCUMENTER : quelles infos affichées, actions possibles (remboursement depuis ici ?), lien avec les providers (Stripe, etc.)" },
+      ]},
+      { title: "⚠ Section \"Documents\" (sidebar) — À DOCUMENTER", steps: [
+        { action: "Vérifier la présence de la section Documents", expected: "Section visible avec bouton \"Télécharger la facture PDF\" (et potentiellement avoir, devis, bon de livraison). ⚠ À DOCUMENTER : quels documents générés, format, données incluses" },
+      ]},
+      { title: "⚠ Section \"Contexte de la commande\" (sidebar) — À DOCUMENTER", steps: [
+        { action: "Vérifier la présence de la section Contexte de la commande", expected: "Section visible avec : Valeur (Standard/Premium/...), Rang, Dernière commande, Cadence client, Canal, Device. ⚠ À DOCUMENTER : comment ces valeurs sont calculées, à quoi sert chaque champ, d'où viennent les données" },
+      ]},
+      { title: "Sections manquantes (prévues dans le PRD)", steps: [
+        { action: "Vérifier la présence du bloc Adresses (sidebar)", expected: "Adresse de livraison + adresse de facturation + bouton Copier. ❌ ABSENT de la page actuelle — l'adresse ne doit pas dépendre de la note client" },
+        { action: "Vérifier la présence de la Recommandation d'expédition", expected: "Transporteur recommandé + alternatives + warnings (valeur > 52€ sans assurance). ❌ ABSENT de la page actuelle" },
+        { action: "Vérifier la présence du bloc Édition design (sidebar, admin/super-op)", expected: "Liste des views du design + accès éditeur admin. ❌ ABSENT de la page actuelle (peut-être conditionnel)" },
       ]}
     ]
   },
@@ -1092,6 +1168,17 @@ function toggleNote(key) {
   render();
 }
 
+function getFlowNote(flowId) {
+  const key = `_flownote_${flowId}`;
+  return (state[key] && state[key].note) || "";
+}
+
+function setFlowNote(flowId, note) {
+  const key = `_flownote_${flowId}`;
+  state[key] = { note: note };
+  saveState();
+}
+
 // ===== RENDER =====
 function render() {
   const app = document.getElementById("app");
@@ -1131,6 +1218,19 @@ function render() {
     html += `</div>`;
 
     html += `<div class="flow-body">`;
+
+    // General notes area
+    const flowNote = getFlowNote(flow.id);
+    const noteHasContent = flowNote.trim().length > 0;
+    html += `<div class="flow-notes">`;
+    html += `<div class="flow-notes-header">`;
+    html += `<span class="flow-notes-title">📋 Notes générales</span>`;
+    if (noteHasContent) html += `<span class="flow-notes-badge">• contient des notes</span>`;
+    html += `</div>`;
+    html += `<textarea placeholder="Observations générales sur ce flow : éléments manquants, ajouts non prévus, points à documenter, questions pour le dev..." onblur="setFlowNote('${flow.id}', this.value)">${flowNote}</textarea>`;
+    html += `<div class="flow-notes-hint">Cette zone est partagée en temps réel. Utilisez-la pour lister les écarts, les questions et les décisions à prendre.</div>`;
+    html += `</div>`;
+
     if (flow.prereq) {
       html += `<div class="flow-prereq"><strong>Pré-requis :</strong> ${flow.prereq} &nbsp; <strong>Dépend de :</strong> ${flow.depends}</div>`;
     }
