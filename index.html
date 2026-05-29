@@ -567,8 +567,14 @@ const FLOWS = [
         { action: "Ajouter une note interne (non visible client)", expected: "Note apparaît dans la timeline" },
         { action: "Ajouter une note visible client", expected: "Checkbox \"Visible par le client\" cochée → placeholder change → note enregistrée" },
       ]},
-      { title: "⚠ Section \"Production · Avancement\" — À DOCUMENTER", steps: [
-        { action: "Vérifier la présence de la section Production · Avancement", expected: "Section visible avec barre de progression globale et détail par article (quantité traitée / totale, %). ⚠ À DOCUMENTER : comportement attendu, interactions possibles, lien avec le pipeline production" },
+      { title: "Section \"Production · Étapes\" — Suivi opérationnel", steps: [
+        { action: "Vérifier la présence de la section Production dans la fiche commande", expected: "Section visible affichant les 8 étapes du pipeline sous forme de checklist séquentielle (pas une barre de pourcentage)" },
+        { action: "Vérifier l'affichage des étapes", expected: "Les 8 étapes sont listées dans l'ordre : FILES_CHECK → SUPPORT_SORT → PLATE_LAYOUT → PRINTING → FINISHING → NFC_ENCODING → PACKAGING → LABELING. Chaque étape a un état visuel : ✅ terminée, 🔄 en cours, ⬜ à faire" },
+        { action: "Vérifier que l'étape en cours est clairement identifiée", expected: "L'étape active est mise en évidence visuellement (couleur, icône, bordure) pour que l'opérateur sache immédiatement où il en est" },
+        { action: "Vérifier que les étapes non applicables sont masquées ou grisées", expected: "Si la commande ne contient pas de NFC → l'étape NFC_ENCODING est grisée ou masquée. Si pas de finition → FINISHING grisé" },
+        { action: "Cliquer pour avancer à l'étape suivante", expected: "L'opérateur peut valider l'étape en cours et passer à la suivante directement depuis la fiche commande (bouton \"Étape suivante\" ou clic sur l'étape). L'étape validée passe en ✅" },
+        { action: "Vérifier la cohérence avec le pipeline Production", expected: "L'état affiché ici correspond exactement au ProductionJob dans /back-office/production. Avancer ici = avancer dans le pipeline" },
+        { action: "Vérifier l'affichage par article si plusieurs articles", expected: "Si la commande contient plusieurs articles avec des pipelines différents (ex : cartes + NFC), chaque article a son propre suivi d'étapes" },
       ]},
       { title: "⚠ Section \"Paiements\" (sidebar) — À DOCUMENTER", steps: [
         { action: "Vérifier la présence de la section Paiements dans la sidebar", expected: "Section visible avec historique des paiements ou mention \"Aucun paiement enregistré\". ⚠ À DOCUMENTER : quelles infos affichées, actions possibles (remboursement depuis ici ?), lien avec les providers (Stripe, etc.)" },
