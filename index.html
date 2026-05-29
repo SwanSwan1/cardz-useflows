@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CardzPrinter — Use Flows Back-Office</title>
+<style>
+  :root {
+    --navy: #1a1f36;
+    --brass: #c0ab76;
+    --brass-light: #d4c48f;
+    --green: #22c55e;
+    --green-bg: #f0fdf4;
+    --red: #ef4444;
+    --red-bg: #fef2f2;
+    --orange: #f59e0b;
+    --orange-bg: #fffbeb;
+    --gray: #6b7280;
+    --gray-light: #f9fafb;
+    --gray-border: #e5e7eb;
+    --blue: #3b82f6;
+    --blue-bg: #eff6ff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--gray-light);
+    color: #1f2937;
+    line-height: 1.5;
+  }
+
+  /* Header */
+  .header {
+    background: var(--navy);
+    color: white;
+    padding: 20px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+  .header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--brass);
+  }
+  .header-sub {
+    font-size: 13px;
+    color: #9ca3af;
+    margin-top: 4px;
+  }
+  .header-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .header-actions button {
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.1);
+    color: white;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .header-actions button:hover {
+    background: rgba(255,255,255,0.2);
+  }
+  .header-actions .btn-primary {
+    background: var(--brass);
+    color: var(--navy);
+    border-color: var(--brass);
+    font-weight: 600;
+  }
+  .header-actions .btn-primary:hover {
+    background: var(--brass-light);
+  }
+  .header-actions .btn-danger {
+    border-color: var(--red);
+    color: var(--red);
+  }
+  .header-actions .btn-danger:hover {
+    background: rgba(239,68,68,0.2);
+  }
+
+  /* Progress bar */
+  .progress-bar-container {
+    background: var(--navy);
+    padding: 0 24px 16px;
+    position: sticky;
+    top: 0;
+    z-index: 99;
+  }
+  .progress-stats {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: #9ca3af;
+  }
+  .progress-stats span { display: flex; align-items: center; gap: 4px; }
+  .progress-stats .dot {
+    width: 8px; height: 8px; border-radius: 50%; display: inline-block;
+  }
+  .dot-ok { background: var(--green); }
+  .dot-fail { background: var(--red); }
+  .dot-partial { background: var(--orange); }
+  .dot-pending { background: var(--gray); }
+  .progress-bar {
+    height: 6px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 3px;
+    overflow: hidden;
+    display: flex;
+  }
+  .progress-segment {
+    height: 100%;
+    transition: width 0.4s ease;
+  }
+  .progress-segment.ok { background: var(--green); }
+  .progress-segment.fail { background: var(--red); }
+  .progress-segment.partial { background: var(--orange); }
+
+  /* Filter bar */
+  .filter-bar {
+    padding: 12px 24px;
+    background: white;
+    border-bottom: 1px solid var(--gray-border);
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 98;
+  }
+  .filter-bar label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gray);
+    margin-right: 4px;
+  }
+  .filter-btn {
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--gray-border);
+    background: white;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .filter-btn:hover { border-color: var(--brass); color: var(--navy); }
+  .filter-btn.active {
+    background: var(--navy);
+    color: white;
+    border-color: var(--navy);
+  }
+
+  /* Main */
+  .main { max-width: 1100px; margin: 0 auto; padding: 24px; }
+
+  /* Flow card */
+  .flow-card {
+    background: white;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    overflow: hidden;
+    border: 1px solid var(--gray-border);
+  }
+  .flow-header {
+    padding: 16px 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    user-select: none;
+    transition: background 0.2s;
+  }
+  .flow-header:hover { background: var(--gray-light); }
+  .flow-code {
+    font-size: 12px;
+    font-weight: 700;
+    color: white;
+    background: var(--navy);
+    padding: 2px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  .flow-title { flex: 1; font-weight: 600; font-size: 15px; }
+  .flow-criticality { font-size: 14px; }
+  .flow-progress-mini {
+    font-size: 12px;
+    color: var(--gray);
+    min-width: 60px;
+    text-align: right;
+  }
+  .flow-chevron {
+    color: var(--gray);
+    transition: transform 0.3s;
+    font-size: 18px;
+  }
+  .flow-card.open .flow-chevron { transform: rotate(180deg); }
+  .flow-body { display: none; padding: 0 20px 16px; }
+  .flow-card.open .flow-body { display: block; }
+  .flow-prereq {
+    font-size: 13px;
+    color: var(--gray);
+    padding: 8px 12px;
+    background: var(--blue-bg);
+    border-radius: 6px;
+    margin-bottom: 12px;
+  }
+  .flow-prereq strong { color: var(--navy); }
+
+  /* Step rows */
+  .step-section {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--navy);
+    padding: 10px 0 4px;
+    border-bottom: 2px solid var(--navy);
+    margin-top: 12px;
+    margin-bottom: 4px;
+  }
+  .step-row {
+    display: grid;
+    grid-template-columns: 36px 1fr 200px;
+    gap: 8px;
+    align-items: start;
+    padding: 8px 0;
+    border-bottom: 1px solid #f3f4f6;
+    font-size: 14px;
+    transition: background 0.2s;
+  }
+  .step-row:hover { background: #fafafa; }
+  .step-num {
+    font-weight: 600;
+    color: var(--gray);
+    text-align: center;
+    padding-top: 2px;
+  }
+  .step-content {}
+  .step-action { font-weight: 500; }
+  .step-expected { font-size: 12px; color: var(--gray); margin-top: 2px; }
+  .step-controls {
+    display: flex;
+    gap: 4px;
+    justify-content: flex-end;
+    align-items: start;
+    flex-wrap: wrap;
+  }
+  .status-btn {
+    width: 30px; height: 30px;
+    border-radius: 6px;
+    border: 2px solid var(--gray-border);
+    background: white;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+  .status-btn:hover { transform: scale(1.1); }
+  .status-btn.active-ok { border-color: var(--green); background: var(--green-bg); }
+  .status-btn.active-fail { border-color: var(--red); background: var(--red-bg); }
+  .status-btn.active-partial { border-color: var(--orange); background: var(--orange-bg); }
+
+  /* Note area */
+  .step-note-area {
+    grid-column: 1 / -1;
+    margin-top: 4px;
+  }
+  .step-note {
+    width: 100%;
+    border: 1px solid var(--gray-border);
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 13px;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 60px;
+    transition: border-color 0.2s;
+  }
+  .step-note:focus { outline: none; border-color: var(--brass); }
+  .step-note-label {
+    font-size: 11px;
+    color: var(--gray);
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+
+  /* Row status colors */
+  .step-row.status-ok { background: var(--green-bg); }
+  .step-row.status-fail { background: var(--red-bg); }
+  .step-row.status-partial { background: var(--orange-bg); }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--navy);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 1000;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* Last updated */
+  .last-updated {
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    margin-left: auto;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .step-row {
+      grid-template-columns: 30px 1fr;
+    }
+    .step-controls {
+      grid-column: 1 / -1;
+      justify-content: flex-start;
+      margin-top: 4px;
+    }
+    .header-actions { flex-direction: column; }
+    .progress-stats { flex-wrap: wrap; gap: 8px; }
+    .filter-bar { overflow-x: auto; flex-wrap: nowrap; }
+  }
+
+  /* Print */
+  @media print {
+    .header, .progress-bar-container, .filter-bar, .header-actions { display: none; }
+    .flow-card { break-inside: avoid; }
+    .flow-body { display: block !important; }
+    .status-btn { border: 1px solid #ccc; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+    <div>
+      <h1>Use Flows — Back-Office CardzPrinter V2</h1>
+      <div class="header-sub">Parcours fonctionnels interactifs — Cliquer sur un flow pour l'ouvrir, marquer chaque étape</div>
+    </div>
+    <div class="last-updated" id="lastUpdated"></div>
+  </div>
+  <div class="header-actions">
+    <button onclick="expandAll()">Tout ouvrir</button>
+    <button onclick="collapseAll()">Tout fermer</button>
+    <button class="btn-primary" onclick="exportState()">Exporter l'état (JSON)</button>
+    <button onclick="importState()">Importer un état</button>
+    <button class="btn-danger" onclick="resetAll()">Réinitialiser</button>
+  </div>
+</div>
+
+<div class="progress-bar-container">
+  <div class="progress-stats" id="progressStats"></div>
+  <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<div class="filter-bar">
+  <label>Filtrer :</label>
+  <button class="filter-btn active" data-filter="all" onclick="setFilter('all', this)">Tout</button>
+  <button class="filter-btn" data-filter="pending" onclick="setFilter('pending', this)"><span class="dot dot-pending"></span> Non testé</button>
+  <button class="filter-btn" data-filter="ok" onclick="setFilter('ok', this)"><span class="dot dot-ok"></span> Validé</button>
+  <button class="filter-btn" data-filter="fail" onclick="setFilter('fail', this)"><span class="dot dot-fail"></span> Bloqué</button>
+  <button class="filter-btn" data-filter="partial" onclick="setFilter('partial', this)"><span class="dot dot-partial"></span> Partiel</button>
+</div>
+
+<div class="main" id="app"></div>
+
+<div class="toast" id="toast"></div>
+<div id="syncStatus" style="position:fixed;bottom:24px;left:24px;font-size:11px;color:#9ca3af;z-index:1000;"></div>
+<input type="file" id="importInput" accept=".json" style="display:none" onchange="handleImport(event)">
+
+<!-- Firebase SDK (compat mode - single script, no npm needed) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
+<script>
+// ===== FIREBASE INIT =====
+firebase.initializeApp({
+  apiKey: "AIzaSyDxEU2Ua8VJKxZFrlUEqFMU0GNInzwm3NI",
+  authDomain: "cardzprinter-useflow.firebaseapp.com",
+  databaseURL: "https://cardzprinter-useflow-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "cardzprinter-useflow",
+  storageBucket: "cardzprinter-useflow.firebasestorage.app",
+  messagingSenderId: "153364403591",
+  appId: "1:153364403591:web:87e7ae09972788c46daf22"
+});
+const db = firebase.database();
+const stateRef = db.ref("useflows/state");
+
+// ===== DATA =====
+const FLOWS = [
+  {
+    id: "UF-01", title: "Accéder au Dashboard", criticality: "🔴", depends: "—",
+    prereq: null,
+    sections: [
+      { title: null, steps: [
+        { action: "Naviguer vers /back-office", expected: "La page du dashboard se charge sans erreur" },
+        { action: "Vérifier la sidebar gauche", expected: "Sidebar dark (navy) avec les liens : Dashboard, Commandes, Production, Catalogue, Clients, Messages, Stock, Statistiques, Configuration, Utilisateurs" },
+        { action: "Vérifier les badges sidebar", expected: "Badges numériques sur Commandes, Production, Clients, Messages, Stock (si données disponibles)" },
+        { action: "Vérifier le bloc \"Urgences\"", expected: "Nombre de commandes urgentes aujourd'hui / demain / en retard affiché" },
+        { action: "Vérifier le bloc \"CA\"", expected: "CA du jour, de la semaine, du mois avec deltas en %" },
+        { action: "Vérifier le bloc \"Commandes\"", expected: "Nombre de commandes par période (jour/semaine/mois/total)" },
+        { action: "Vérifier le bloc \"Monitoring stock\"", expected: "Alertes stock affichées si articles LOW/CRITICAL" },
+        { action: "Vérifier le graphique barres", expected: "Graphique des commandes par jour sur 14 jours visible" },
+        { action: "Vérifier les 5 dernières commandes", expected: "Liste cliquable des 5 dernières commandes" },
+        { action: "Cliquer sur une commande récente", expected: "Navigation vers /back-office/commandes/[id]" },
+        { action: "Revenir au Dashboard (sidebar)", expected: "Retour au dashboard sans erreur" },
+        { action: "Vérifier les tickets ouverts", expected: "Liste des tickets NEW/OPEN affichée" },
+        { action: "Cliquer sur le bouton \"Reset données\"", expected: "Toutes les données se réinitialisent (seeds de démo)" },
+      ]}
+    ]
+  },
+  {
+    id: "UF-02", title: "Consulter la liste des commandes", criticality: "🔴", depends: "UF-01",
+    prereq: null,
+    sections: [
+      { title: null, steps: [
+        { action: "Cliquer \"Commandes\" dans la sidebar", expected: "Page /back-office/commandes se charge" },
+        { action: "Vérifier les colonnes", expected: "Référence, client, segment, statut, délai, date, montant TTC visibles" },
+        { action: "Filtrer par statut \"PAID\"", expected: "Seules les commandes payées s'affichent" },
+        { action: "Retirer le filtre statut", expected: "Toutes les commandes réapparaissent" },
+        { action: "Filtrer par segment \"pro\"", expected: "Seules les commandes pro s'affichent" },
+        { action: "Filtrer par délai \"urgent\"", expected: "Seules les commandes urgentes s'affichent" },
+        { action: "Retirer tous les filtres", expected: "Liste complète restaurée" },
+        { action: "Utiliser la recherche textuelle", expected: "Taper une référence ou un nom client → résultats filtrés" },
+        { action: "Trier par date (clic colonne)", expected: "Ordre ascendant/descendant alterne" },
+        { action: "Trier par montant", expected: "Tri par montant fonctionne" },
+        { action: "Vérifier la pagination", expected: "Si > 1 page, la pagination fonctionne" },
+        { action: "Cliquer sur une ligne de commande", expected: "Navigation vers /back-office/commandes/[id]" },
+      ]}
+    ]
+  },
+  {
+    id: "UF-03", title: "Traiter une commande (cycle complet)", criticality: "🔴", depends: "UF-02",
+    prereq: "Avoir au moins une commande en statut PAID.",
+    sections: [
+      { title: "Fiche commande", steps: [
+        { action: "Ouvrir une commande PAID", expected: "La fiche détail se charge avec toutes les sections" },
+        { action: "Vérifier le header", expected: "Référence V2 (CZ-2026-XXXXX), statut PAID (badge), segment client" },
+        { action: "Vérifier si bandeau \"Note client\"", expected: "Si customerNote existe → bandeau ambré visible avec le texte" },
+        { action: "Vérifier si bandeau \"Legacy\"", expected: "Si commande importée → bandeau pierre avec ref WooCommerce" },
+      ]},
+      { title: "Section Dates clés", steps: [
+        { action: "Vérifier les dates affichées", expected: "Date de paiement visible, expédition et livraison vides ou renseignées" },
+        { action: "Cliquer \"Modifier\" sur les dates", expected: "Modale avec 3 champs datetime-local s'ouvre" },
+        { action: "Cocher \"Recalculer livraison depuis expédition\"", expected: "Le champ livraison se recalcule automatiquement selon le transporteur" },
+        { action: "Cocher \"Notifier le client\"", expected: "Checkbox cochée, pas d'erreur" },
+        { action: "Sauvegarder", expected: "Modale se ferme, dates mises à jour" },
+      ]},
+      { title: "Section Traitement & Livraison", steps: [
+        { action: "Vérifier le délai affiché", expected: "Urgent/Rapide/Standard/Économique visible" },
+        { action: "Cliquer \"Modifier\" le délai", expected: "Modale avec select 4 options + mention \"(N jours ouvrés)\"" },
+        { action: "Vérifier le bandeau warning", expected: "\"Impact : l'échéance de production (dueAt) est recalculée...\" visible" },
+        { action: "Changer le délai et sauvegarder", expected: "Délai mis à jour, modale fermée" },
+      ]},
+      { title: "Section Articles & Facturation", steps: [
+        { action: "Vérifier la liste des articles", expected: "Nom, quantité, prix unitaire HT, total ligne pour chaque article" },
+        { action: "Vérifier les attributs détaillés", expected: "Support, dimension, épaisseur, coins, face, laminage (si disponible)" },
+        { action: "Vérifier les totaux", expected: "Sous-total HT, TVA, frais de port, remises, total TTC corrects" },
+      ]},
+      { title: "Section Recommandation d'expédition", steps: [
+        { action: "Vérifier la recommandation transporteur", expected: "Transporteur recommandé + prix + délai affiché" },
+        { action: "Vérifier les alternatives", expected: "Liste d'autres transporteurs cliquables" },
+        { action: "Vérifier les warnings éventuels", expected: "Alerte jaune si valeur > 52€ sans assurance par ex." },
+      ]},
+      { title: "Sidebar — Bloc Client", steps: [
+        { action: "Vérifier les infos client", expected: "Nom, segment, société, email (mailto:), téléphone (tel:)" },
+        { action: "Cliquer le lien vers le profil client", expected: "Navigation vers /back-office/clients/[id]" },
+        { action: "Revenir à la fiche commande (bouton retour)", expected: "Retour sans perte de contexte" },
+      ]},
+      { title: "Sidebar — Adresses", steps: [
+        { action: "Vérifier l'adresse de livraison", expected: "Adresse complète affichée" },
+        { action: "Vérifier l'adresse de facturation", expected: "Adresse ou mention \"Identique à l'adresse de livraison\"" },
+        { action: "Cliquer le bouton \"Copier\"", expected: "Adresse copiée dans le presse-papier (tester Ctrl+V)" },
+      ]},
+      { title: "Transitions de statut", steps: [
+        { action: "Passer la commande en PROCESSING", expected: "Statut change, badge se met à jour" },
+        { action: "Vérifier qu'un ProductionJob a été créé", expected: "Aller dans Production → un job lié existe (FILES_CHECK, QUEUED)" },
+        { action: "Revenir sur la fiche commande", expected: "Fiche commande chargée" },
+        { action: "Passer en PRINT_READY", expected: "Statut change" },
+        { action: "Passer en PRINTING", expected: "Statut change" },
+        { action: "Passer en FINISHING", expected: "Statut change" },
+        { action: "Passer en SHIPPED", expected: "Modale pour saisir transporteur + n° de suivi" },
+        { action: "Renseigner le transporteur et n° suivi", expected: "Infos sauvegardées, statut SHIPPED" },
+        { action: "Passer en DELIVERED", expected: "Statut DELIVERED, date de livraison renseignée" },
+      ]},
+      { title: "Notes internes", steps: [
+        { action: "Ajouter une note interne (non visible client)", expected: "Note apparaît dans la timeline" },
+        { action: "Ajouter une note visible client", expected: "Checkbox \"Visible par le client\" cochée → placeholder change → note enregistrée" },
+      ]}
+    ]
+  },
+  {
+    id: "UF-04", title: "Rembourser / Annuler une commande", criticality: "🔴", depends: "UF-03",
+    prereq: "Commande en statut PAID ou plus avancé.",
+    sections: [
+      { title: "Remboursement", steps: [
+        { action: "Ouvrir une commande éligible au remboursement", expected: "Fiche commande chargée" },
+        { action: "Cliquer sur l'action \"Rembourser\"", expected: "Formulaire de remboursement s'ouvre" },
+        { action: "Vérifier les champs", expected: "Montant (pré-rempli), raison, code raison (5 choix), destination (provider / wallet)" },
+        { action: "Sélectionner \"Rembourser vers le wallet\"", expected: "Option toWallet: true sélectionnée" },
+        { action: "Valider le remboursement", expected: "Remboursement créé, statut → REFUNDED ou PARTIALLY_REFUNDED" },
+        { action: "Vérifier qu'un avoir (CreditNote) a été généré", expected: "Référence AV-{year}-{seq} visible dans la fiche" },
+        { action: "Vérifier la timeline", expected: "Event \"remboursement\" visible" },
+      ]},
+      { title: "Annulation", steps: [
+        { action: "Ouvrir une autre commande PAID", expected: "Fiche commande chargée" },
+        { action: "Cliquer sur l'action \"Annuler\"", expected: "Formulaire d'annulation s'ouvre" },
+        { action: "Vérifier les champs", expected: "Raison (texte), choix refundToOrigin (true/false)" },
+        { action: "Valider l'annulation", expected: "Statut → CANCELLED" },
+        { action: "Vérifier que le stock a été réversé", expected: "Si production non démarrée, le stock est restitué" },
+        { action: "Vérifier la note admin", expected: "Note automatique dans la timeline" },
+      ]}
+    ]
+  },
+  {
+    id: "UF-05", title: "Gérer le pipeline de production", criticality: "🔴", depends: "UF-03",
+    prereq: "Au moins un ProductionJob existe (créé automatiquement quand une commande passe en PAID).",
+    sections: [
+      { title: null, steps: [
+        { action: "Cliquer \"Production\" dans la sidebar", expected: "Page /back-office/production se charge" },
+        { action: "Vérifier les colonnes", expected: "Référence, étape, support, quantité, statut, opérateur, échéance, note QC" },
+        { action: "Filtrer par étape \"FILES_CHECK\"", expected: "Seuls les jobs à cette étape s'affichent" },
+        { action: "Filtrer par statut \"QUEUED\"", expected: "Seuls les jobs en attente s'affichent" },
+        { action: "Retirer les filtres", expected: "Liste complète restaurée" },
+      ]},
+      { title: "Avancer un job dans le pipeline", steps: [
+        { action: "Trouver un job en FILES_CHECK / QUEUED", expected: "Job identifié" },
+        { action: "Assigner un opérateur (select dropdown)", expected: "Opérateur assigné au job" },
+        { action: "Cliquer le bouton \"Avancer\"", expected: "Job passe à SUPPORT_SORT, statut → IN_PROGRESS" },
+        { action: "Cliquer \"Avancer\" à nouveau", expected: "Job passe à PLATE_LAYOUT" },
+        { action: "Cliquer \"Avancer\"", expected: "Job passe à PRINTING" },
+        { action: "Cliquer \"Avancer\"", expected: "Job passe à FINISHING" },
+        { action: "Cliquer \"Avancer\"", expected: "Job passe à NFC_ENCODING (ou PACKAGING si pas NFC)" },
+        { action: "Cliquer \"Avancer\"", expected: "Job passe à PACKAGING (ou LABELING)" },
+        { action: "Cliquer \"Avancer\"", expected: "Job passe à LABELING" },
+        { action: "Cliquer \"Avancer\" sur le dernier stage", expected: "Erreur affichée : \"Déjà au dernier stage\"" },
+      ]},
+      { title: "Contrôle qualité", steps: [
+        { action: "Sur un job en cours, cliquer le bouton \"QC\"", expected: "Statut passe à QC" },
+        { action: "Valider le QC (DONE)", expected: "Statut passe à DONE" },
+      ]},
+      { title: "Actions bulk", steps: [
+        { action: "Cocher 2-3 jobs avec les checkboxes", expected: "Jobs sélectionnés" },
+        { action: "Cliquer \"Avancer N jobs\"", expected: "Tous les jobs sélectionnés avancent d'une étape" },
+      ]},
+      { title: "Lien vers la commande", steps: [
+        { action: "Cliquer la référence commande d'un job", expected: "Navigation vers la fiche commande liée" },
+      ]}
+    ]
+  },
+  {
+    id: "UF-06", title: "Consulter et gérer les stocks", criticality: "🔴", depends: "UF-01",
+    prereq: null,
+    sections: [
+      { title: null, steps: [
+        { action: "Cliquer \"Stock\" dans la sidebar", expected: "Page /back-office/stock se charge" },
+        { action: "Vérifier les colonnes", expected: "Image, SKU, nom, kind, sous-catégorie, qté en stock, qté attribuée, seuils" },
+        { action: "Vérifier les badges de quantité", expected: "Couleur verte (OK), jaune (LOW), rouge (CRITICAL) selon seuils" },
+        { action: "Survoler une image pendant 800ms", expected: "Preview hover apparaît" },
+        { action: "Cliquer la preview", expected: "Lightbox plein écran s'ouvre" },
+        { action: "Fermer la lightbox", expected: "Retour à la liste" },
+      ]},
+      { title: "Détail d'un article", steps: [
+        { action: "Cliquer \"Voir\" sur un article", expected: "Page /back-office/stock/[id] se charge" },
+        { action: "Vérifier l'onglet \"Informations\"", expected: "SKU, nom, kind, image, unité, emplacement, notes visibles" },
+      ]},
+      { title: "Mouvement IN (entrée de stock)", steps: [
+        { action: "Aller à l'onglet \"Mouvements\"", expected: "Historique des mouvements visible" },
+        { action: "Cliquer le bouton \"IN\" (PURCHASE)", expected: "Formulaire de mouvement s'ouvre" },
+        { action: "Saisir une quantité (ex: 50)", expected: "Champ rempli" },
+        { action: "Ajouter une référence et une note", expected: "Champs remplis" },
+        { action: "Valider", expected: "Mouvement créé, quantité en stock augmentée de 50" },
+        { action: "Vérifier dans l'historique", expected: "Nouveau mouvement type PURCHASE visible" },
+      ]},
+      { title: "Mouvement OUT (perte)", steps: [
+        { action: "Cliquer le bouton \"OUT\" (LOSS)", expected: "Formulaire s'ouvre" },
+        { action: "Saisir une quantité (ex: 5)", expected: "Champ rempli" },
+        { action: "Valider", expected: "Mouvement créé, quantité diminuée de 5" },
+      ]},
+      { title: "Ajustement (CORRECTION)", steps: [
+        { action: "Cliquer le bouton \"ADJUST\"", expected: "Formulaire s'ouvre avec champ \"valeur cible\"" },
+        { action: "Saisir une valeur cible (ex: 100)", expected: "Champ rempli" },
+        { action: "Valider", expected: "Le système calcule le delta automatiquement" },
+        { action: "Vérifier le mouvement créé", expected: "Type CORRECTION, quantité = delta calculé" },
+      ]},
+      { title: "Onglet Paramètres", steps: [
+        { action: "Aller à l'onglet \"Paramètres\"", expected: "Seuils d'alerte éditables, bouton archive visibles" },
+        { action: "Modifier le seuil d'alerte", expected: "Nouvelle valeur sauvegardée" },
+        { action: "Modifier le seuil critique", expected: "Nouvelle valeur sauvegardée" },
+      ]}
+    ]
+  },
+  {
+    id: "UF-07", title: "Gérer les fournisseurs d'un article", criticality: "🟡", depends: "UF-06",
+    prereq: "Être dans la fiche détail d'un article stock (UF-06).",
+    sections: [
+      { title: null, steps: [
+        { action: "Aller à l'onglet \"Fournisseurs\"", expected: "Liste des fournisseurs liés (peut être vide)" },
+        { action: "Cliquer \"Ajouter un fournisseur\"", expected: "Sélecteur de fournisseur existant s'ouvre" },
+        { action: "Sélectionner un fournisseur", expected: "Fournisseur lié à l'article" },
+        { action: "Renseigner prix unitaire, délai, qté minimum", expected: "Infos sauvegardées" },
+        { action: "Cliquer \"Désigner principal\"", expected: "Le fournisseur devient le fournisseur principal" },
+        { action: "Ajouter un 2e fournisseur", expected: "2e fournisseur lié" },
+        { action: "Cliquer \"Retirer\" sur le 2e fournisseur", expected: "Fournisseur délié, disparaît de la liste" },
+        { action: "Cliquer \"Créer un nouveau fournisseur\"", expected: "Formulaire de création fournisseur s'ouvre" },
+        { action: "Remplir les infos et valider", expected: "Fournisseur créé et automatiquement lié" },
+      ]}
+    ]
+  },
+  {
+    id: "UF-08", title: "Gérer les clients", criticality: "🔴", depends: "UF-01",
+    prereq: null,
+    sections: [
+      { title: null, steps: [
+        { action: "Cliquer \"Clients\" dans la sidebar", expected: "Page /back-office/clients se charge" },
+        { action: "Vérifier les colonnes", expected: "Nom, email, segment, nb commandes, LTV, date inscription, dernière activité" },
+        { action: "Filtrer par segment \"revendeur\"", expected: "Seuls les revendeurs s'affichent" },
+        { action: "Rechercher un client par nom ou email", expected: "Résultats filtrés" },
+        { action: "Cliquer sur un client", expected: "Page /back-office/clients/[id] se charge" },
+      ]},
+      { title: "Fiche client — Profil", steps: [
+        { action: "Vérifier le profil", expected: "Nom, prénom, email, tél, société, segment, LTV, nb commandes, statut, dates" },
+        { action: "Modifier le segment manuellement", expected: "Segment mis à jour" },
+        { action: "Activer/Désactiver le compte", expected: "Toggle fonctionne, statut change" },
+        { action: "Ajouter une note admin", expected: "Note enregistrée avec auteur et date" },
+      ]},
+      { title: "Fiche client — Onglet Commandes", steps: [
+        { action: "Aller à l'onglet \"Commandes\"", expected: "Liste des commandes du client avec statuts et montants" },
+        { action: "Cliquer sur une commande", expected: "Navigation vers la fiche commande" },
+      ]},
+      { title: "Fiche client — Onglet Tracking", steps: [
+        { action: "Aller à l'onglet \"Tracking\"", expected: "Source d'acquisition, UTM, device, events, sessions visibles" },
+      ]}
+    ]
+  },
+  {
+    id: "UF-09", title: "Consulter le wallet d'un client", criticality: "🟡", depends: "UF-08",
+    prereq: "Être dans la fiche détail d'un client (UF-08).",
+    sections: [
+      { title: null, steps: [
+        { action: "Aller à l'onglet \"Wallet\"", expected: "Liste des wallets du client affichée" },
+        { action: "Vérifier le solde de chaque wallet", expected: "cachedBalanceCents affiché correctement en €" },
+        { action: "Vérifier le statut", expected: "Normal ou frozen (si gelé : indicateur visuel)" },
+        { action: "Ouvrir le ledger d'un wallet", expected: "Liste paginée des entrées : séquence, direction, montant, kind, auteur, date" },
+        { action: "Naviguer dans la pagination du ledger", expected: "Pages suivantes/précédentes fonctionnent" },
+        { action: "Vérifier le bandeau anomalies", expected: "Si anomalies OPEN → WalletAnomaliesBanner visible" },
+      ]}
+    ]
+  },
+  {
+    id: "UF-10", title: "Gérer les tickets SAV", criticality: "🔴", depends: "UF-01",
+    prereq: null,
+    sections: [
+      { title: null, steps: [
+        { action: "Cliquer \"Messages\" dans la sidebar", expected: "Page /back-office/messages se charge" },
+        { action: "Vérifier les colonnes", expected: "Référence, sujet, client, statut, priorité, opérateur, date maj, SLA restant" },
+        { action: "Filtrer par statut \"NEW\"", expected: "Seuls les nouveaux tickets s'affichent" },
+        { action: "Filtrer par priorité \"URGENT\"", expected: "Seuls les tickets urgents s'affichent" },
+        { action: "Retirer les filtres", expected: "Liste complète" },
+        { action: "Rechercher un ticket", expected: "Recherche textuelle fonctionne" },
+        { action: "Assigner rapidement un opérateur", expected: "Opérateur assigné au ticket" },
+        { action: "Cliquer sur un ticket", expected: "Navigation vers /back-office/messages/[id]" },
+      ]}
+    ]
+  },
+  {
+    id: "UF-11", title: "Répondre à un ticket SAV", criticality: "🔴", depends: "UF-10",
+    prereq: "Avoir au moins un ticket SAV.",
+    sections: [
+      { title: "Panneau contexte client", steps: [
+        { action: "Ouvrir un ticket", expected: "Page détail ticket chargée" },
+        { action: "Vérifier le panneau client (gauche)", expected: "Nom, email, segment, LTV visibles" },
+        { action: "Vérifier les 5 dernières commandes", expected: "Commandes avec statuts et liens cliquables" },
+        { action: "Vérifier l'historique tickets", expected: "Tickets précédents du client listés" },
+        { action: "Vérifier l'auto-détection des références", expected: "N° de commande dans les messages → liens cliquables" },
+      ]},
+      { title: "Fil de messages", steps: [
+        { action: "Vérifier le fil de messages", expected: "Messages chronologiques avec distinction visuelle client / agent / IA" },
+        { action: "Vérifier les métadonnées", expected: "Auteur, date, type pour chaque message" },
+      ]},
+      { title: "Actions", steps: [
+        { action: "Assigner le ticket à un opérateur", expected: "Opérateur assigné" },
+        { action: "Changer la priorité en \"HIGH\"", expected: "Priorité mise à jour" },
+        { action: "Changer le statut en \"OPEN\"", expected: "Statut mis à jour" },
+      ]},
+      { title: "Répondre", steps: [
+        { action: "Rédiger une réponse dans le textarea", expected: "Texte saisi" },
+        { action: "Cliquer \"Envoyer\"", expected: "Message ajouté au fil, statut passe à PENDING" },
+        { action: "Vérifier que le nouveau message apparaît", expected: "Message visible dans la timeline" },
+      ]},
+      { title: "Résolution", steps: [
+        { action: "Changer le statut en \"RESOLVED\"", expected: "Statut mis à jour" },
+      ]}
+    ]
+  },
+  {
+    id: "UF-12", title: "Gérer le catalogue (templates)", criticality: "🟡", depends: "UF-01",
+    prereq: null,
+    sections: [
+      { title: null, steps: [
+        { action: "Cliquer \"Catalogue\" dans la sidebar", expected: "Page /back-office/catalogue se charge" },
+        { action: "Vérifier les colonnes", expected: "Image, nom, catégorie, support, prix de base, visibilité" },
+        { action: "Vérifier le nombre de templates", expected: "~939 templates listés (avec pagination)" },
+        { action: "Toggle visibilité d'un template", expected: "Le template passe visible → masqué (ou inversement)" },
+        { action: "Cliquer sur un template", expected: "Page /back-office/catalogue/[sku] se charge" },
+        { action: "Vérifier les informations", expected: "Nom, catégorie, support, prix, visibilité, SEO metadata" },
+        { action: "Modifier le nom", expected: "Sauvegardé" },
+        { action: "Modifier le prix", expected: "Sauvegardé" },
+        { action: "Modifier les metadata SEO", expected: "Sauvegardé" },
+        { action: "Toggle visibilité depuis le détail", expected: "Fonctionne" },
+      ]}
+    ]
+  },
+  {
+    id: "UF-13", title: "Consulter les statistiques", criticality: "🟡", depends: "UF-01",
+    prereq: null,
+    sections: [
+      { title: null, steps: [
+        { action: "Cliquer \"Statistiques\" dans la sidebar", expected: "Page /back-office/statistiques se charge" },
+      ]},
+      { title: "Filtres globaux", steps: [
+        { action: "Sélectionner la période \"30 jours\"", expected: "Données filtrées sur 30j" },
+        { action: "Sélectionner le segment \"pro\"", expected: "Données filtrées sur les pros" },
+        { action: "Sélectionner une plage custom", expected: "Date picker fonctionne, données filtrées" },
+      ]},
+      { title: "Onglet KPIs", steps: [
+        { action: "Vérifier les KPIs", expected: "CA total, nb commandes, articles vendus, panier moyen, clients uniques, taux conversion" },
+      ]},
+      { title: "Onglet Revenus", steps: [
+        { action: "Vérifier la courbe CA mensuel", expected: "12 mois N vs N-1 affichés" },
+        { action: "Vérifier marge par mois", expected: "Courbe marge % visible" },
+        { action: "Vérifier la ventilation par segment", expected: "Graphique segment visible" },
+        { action: "Vérifier la ventilation par catégorie", expected: "Graphique catégorie visible" },
+      ]},
+      { title: "Onglet Cohortes", steps: [
+        { action: "Vérifier le tableau de rétention", expected: "6 cohortes mensuelles affichées" },
+      ]},
+      { title: "Onglet Clients", steps: [
+        { action: "Vérifier le top 20 clients", expected: "Nom, segment, CA, nb commandes" },
+        { action: "Cliquer sur un client", expected: "Navigation vers la fiche 360° du client" },
+      ]},
+      { title: "Onglet Produits", steps: [
+        { action: "Vérifier le top 15 SKUs", expected: "SKUs par CA" },
+        { action: "Vérifier les insights", expected: "Most viewed, most added to cart, most hesitated" },
+      ]},
+      { title: "Onglet Tracking", steps: [
+        { action: "Rechercher un utilisateur", expected: "Résultats de recherche affichés" },
+        { action: "Sélectionner un utilisateur", expected: "Timeline complète avec events" },
+      ]}
+    ]
+  },
+  {
+    id: "UF-14", title: "Configurer l'expédition", criticality: "🔴", depends: "UF-01",
+    prereq: null,
+    sections: [
+      { title: null, steps: [
+        { action: "Cliquer \"Configuration\" dans la sidebar", expected: "Page /back-office/configuration se charge" },
+      ]},
+      { title: "Section Lettre Suivie La Poste", steps: [
+        { action: "Vérifier les 6 tiers affichés", expected: "≤20g / 100g / 250g / 500g / 1kg / 2kg avec poids max, coût réel, prix client, toggle" },
+        { action: "Modifier le coût réel d'un tier", expected: "Valeur sauvegardée" },
+        { action: "Modifier le prix facturé client", expected: "Valeur sauvegardée" },
+        { action: "Désactiver un tier (toggle)", expected: "Tier désactivé" },
+        { action: "Réactiver le tier", expected: "Tier réactivé" },
+      ]},
+      { title: "Section Marges Boxtal", steps: [
+        { action: "Vérifier les 7 transporteurs", expected: "Colissimo, Chronopost, UPS Standard/Express, Mondial Relay, Relais Colis, La Poste Intl" },
+        { action: "Modifier la marge d'un transporteur (slider)", expected: "Pourcentage mis à jour" },
+        { action: "Désactiver un transporteur", expected: "Transporteur désactivé" },
+      ]},
+      { title: "Section Règles de routage", steps: [
+        { action: "Vérifier les règles affichées", expected: "Seuil poids, seuil valeur, transporteurs défaut, heure limite UPS" },
+        { action: "Modifier le seuil poids lettre→colis", expected: "Valeur sauvegardée" },
+        { action: "Modifier le transporteur par défaut France", expected: "Valeur sauvegardée" },
+        { action: "Modifier l'heure limite collecte UPS", expected: "Valeur sauvegardée" },
+      ]},
+      { title: "Section Point Relais", steps: [
+        { action: "Toggle activation globale point relais", expected: "Activé/désactivé" },
+        { action: "Exclure le délai URGENT", expected: "URGENT ajouté aux exclusions" },
+      ]},
+      { title: "Section Mode Économique", steps: [
+        { action: "Toggle activation mode économique", expected: "Activé/désactivé" },
+        { action: "Changer le transporteur gratuit", expected: "Valeur sauvegardée" },
+      ]}
+    ]
+  },
+  {
+    id: "UF-15", title: "Gérer les utilisateurs admin", criticality: "🟡", depends: "UF-01",
+    prereq: null,
+    sections: [
+      { title: null, steps: [
+        { action: "Cliquer \"Utilisateurs\" dans la sidebar", expected: "Page /back-office/utilisateurs se charge" },
+        { action: "Vérifier la liste", expected: "Nom, email, rôle (admin/super-op/operator), statut" },
+        { action: "Toggle actif/inactif sur un utilisateur", expected: "Statut change" },
+      ]}
+    ]
+  },
+  {
+    id: "UF-16", title: "Consulter les anomalies wallet", criticality: "🟡", depends: "UF-09",
+    prereq: null,
+    sections: [
+      { title: null, steps: [
+        { action: "Naviguer vers /back-office/wallet/anomalies", expected: "Page se charge" },
+        { action: "Filtrer par statut \"open\"", expected: "Seules les anomalies ouvertes s'affichent" },
+        { action: "Filtrer par sévérité \"critical\"", expected: "Seules les anomalies critiques s'affichent" },
+        { action: "Consulter une anomalie", expected: "Type, wallet concerné, détails visibles" },
+        { action: "Marquer une anomalie comme résolue", expected: "Statut passe à \"resolved\"" },
+      ]}
+    ]
+  },
+  {
+    id: "UF-17", title: "Éditer un design depuis une commande", criticality: "🟡", depends: "UF-03",
+    prereq: "Être connecté en admin ou super_op. Avoir une commande avec un design.",
+    sections: [
+      { title: null, steps: [
+        { action: "Ouvrir une fiche commande avec un design", expected: "Bloc \"Édition de design\" visible dans la sidebar" },
+        { action: "Vérifier la liste des views", expected: "Views listées (ex: Recto, Verso)" },
+        { action: "Cliquer pour ouvrir l'éditeur admin", expected: "Éditeur canvas s'ouvre en mode admin" },
+        { action: "Modifier un élément texte", expected: "Texte modifiable" },
+        { action: "Sauvegarder", expected: "Design sauvegardé (DesignVersion créée)" },
+        { action: "Vérifier l'audit log", expected: "AdminAuditLog créé avec actorId, action, diff" },
+      ]},
+      { title: "Correction variable (commande variabilisée)", steps: [
+        { action: "Corriger une row de variables (ex: carte 42)", expected: "Variable corrigée, pas d'impact sur les autres rows" },
+      ]}
+    ]
+  },
+  {
+    id: "UF-18", title: "Exporter des données (CSV / rapports)", criticality: "🟢", depends: "UF-02, UF-13",
+    prereq: null,
+    sections: [
+      { title: "Export CSV Commandes", steps: [
+        { action: "Aller dans la liste des commandes", expected: "Page chargée" },
+        { action: "Cliquer le bouton \"Export CSV\"", expected: "Fichier CSV téléchargé" },
+        { action: "Ouvrir le CSV", expected: "Données correctes, colonnes lisibles" },
+      ]},
+      { title: "Export CSV Production", steps: [
+        { action: "Aller dans la page Production", expected: "Page chargée" },
+        { action: "Cliquer le bouton \"Export CSV\"", expected: "Fichier CSV téléchargé" },
+      ]},
+      { title: "Rapports Statistiques", steps: [
+        { action: "Aller dans Statistiques", expected: "Page chargée" },
+        { action: "Exporter le rapport de ventes", expected: "Rapport généré avec CA, moyennes, articles, remises, remboursements" },
+        { action: "Exporter le rapport TVA", expected: "Ventilation par code fiscal" },
+      ]}
+    ]
+  },
+  {
+    id: "UF-19", title: "Créer un rework depuis le SAV", criticality: "🔴", depends: "UF-11, UF-05",
+    prereq: "Avoir un ticket SAV lié à une commande livrée ou expédiée.",
+    sections: [
+      { title: "Depuis le ticket SAV", steps: [
+        { action: "Ouvrir un ticket SAV lié à une réclamation client", expected: "Ticket chargé avec contexte client et commande" },
+        { action: "Identifier la commande concernée", expected: "Lien vers la commande visible dans le panneau contexte" },
+        { action: "Cliquer sur la commande pour ouvrir la fiche", expected: "Fiche commande chargée" },
+      ]},
+      { title: "Création du rework", steps: [
+        { action: "Cliquer le bouton \"Créer un rework\" sur la fiche commande", expected: "Écran de sélection du contenu à refaire s'ouvre" },
+        { action: "Vérifier que les articles de la commande sont listés", expected: "Liste des cartes (modèles, designs) et accessoires" },
+      ]},
+      { title: "Sélection — Cas réimpression cartes", steps: [
+        { action: "Cocher une carte à réimprimer", expected: "Carte sélectionnée" },
+        { action: "Saisir la quantité à réimprimer (ex : 3)", expected: "Champ quantité rempli" },
+        { action: "(Si variabilisée) Sélectionner les rows spécifiques", expected: "Rows cochées individuellement (ex : carte 42, 67, 91)" },
+      ]},
+      { title: "Sélection — Cas accessoires manquants", steps: [
+        { action: "Cocher un accessoire à renvoyer (ex : \"Étui PVC\")", expected: "Accessoire sélectionné" },
+        { action: "Saisir la quantité (ex : 2)", expected: "Champ quantité rempli" },
+        { action: "Ajouter un 2e accessoire si nécessaire", expected: "2e ligne ajoutée" },
+      ]},
+      { title: "Sélection — Cas mixte", steps: [
+        { action: "Cocher à la fois des cartes et des accessoires", expected: "Les deux types sélectionnés" },
+      ]},
+      { title: "Configuration du rework", steps: [
+        { action: "Sélectionner le motif (ex : MISSING_ACCESSORIES)", expected: "Motif sélectionné dans le dropdown" },
+        { action: "Vérifier la note client (pré-remplie depuis le ticket)", expected: "Verbatim du client visible" },
+        { action: "Ajouter une note interne si besoin", expected: "Note saisie" },
+        { action: "Vérifier l'étape de départ auto-calculée", expected: "Accessoires seuls → PACKAGING. Cartes → FILES_CHECK. Mixte → étape la plus en amont" },
+        { action: "(Optionnel) Override l'étape de départ manuellement", expected: "Autre étape sélectionnée" },
+        { action: "Vérifier la priorité (défaut : URGENT)", expected: "URGENT sélectionné, dueAt = maintenant + 24h" },
+        { action: "Sélectionner l'origine : INTERNE", expected: "Origine \"Interne\" sélectionnée" },
+        { action: "Cliquer \"Créer le rework\"", expected: "Confirmation, rework créé" },
+      ]},
+      { title: "Vérification dans le pipeline", steps: [
+        { action: "Aller dans Production (sidebar)", expected: "Page production chargée" },
+        { action: "Vérifier qu'un nouveau job apparaît avec le badge [REWORK]", expected: "Job visible avec badge distinctif" },
+        { action: "Vérifier la référence commande", expected: "Même référence que la commande d'origine" },
+        { action: "Vérifier l'étape courante", expected: "Correspond à l'étape auto-calculée" },
+        { action: "Vérifier le contenu affiché pour l'opérateur", expected: "Seul le contenu à refaire est visible (pas toute la commande)" },
+        { action: "Vérifier la note client et le motif", expected: "Visibles pour l'opérateur" },
+        { action: "Vérifier l'échéance (dueAt)", expected: "24h si URGENT, 72h si STANDARD" },
+      ]},
+      { title: "Traitement et clôture", steps: [
+        { action: "Assigner un opérateur au rework job", expected: "Opérateur assigné" },
+        { action: "Avancer le job étape par étape jusqu'à LABELING", expected: "Progression normale" },
+        { action: "Compléter le job (DONE)", expected: "Statut → DONE" },
+        { action: "Vérifier que le ticket SAV lié est auto-résolu", expected: "Ticket passe en RESOLVED ou notification visible" },
+        { action: "Vérifier la notification client", expected: "\"Votre renvoi a été expédié\"" },
+      ]}
+    ]
+  },
+  {
+    id: "UF-20", title: "Créer un rework depuis le QC production", criticality: "🔴", depends: "UF-05",
+    prereq: "Avoir un ProductionJob en étape QC ou BLOCKED.",
+    sections: [
+      { title: null, steps: [
+        { action: "Aller dans Production", expected: "Pipeline chargé" },
+        { action: "Trouver un job et cliquer le bouton \"QC\"", expected: "Job passe en statut QC" },
+        { action: "Constater un défaut → Cliquer \"Créer un rework\" depuis le job", expected: "Écran de sélection s'ouvre, pré-rempli avec le contenu du job" },
+        { action: "Sélectionner les cartes défectueuses", expected: "Cartes cochées avec quantité" },
+        { action: "Sélectionner le motif (ex : PRINT_DEFECT)", expected: "Motif sélectionné" },
+        { action: "Ajouter une note QC (ex : \"Bavure UV sur lot 3\")", expected: "Note saisie" },
+        { action: "Vérifier l'étape de départ auto-calculée", expected: "PRINT_DEFECT → FILES_CHECK, FINISH_DEFECT → FINISHING" },
+        { action: "Créer le rework", expected: "Rework créé, job d'origine continue pour les cartes OK" },
+        { action: "Vérifier le nouveau job [REWORK] dans le pipeline", expected: "Visible avec badge, contenu filtré, motif QC" },
+        { action: "Traiter le rework comme un job normal", expected: "Progression standard jusqu'à DONE" },
+      ]}
+    ]
+  },
+  {
+    id: "UF-21", title: "Traiter un rework sous-traité", criticality: "🟡", depends: "UF-19",
+    prereq: "Créer un rework avec origine \"SOUS-TRAITÉ\" (UF-19).",
+    sections: [
+      { title: null, steps: [
+        { action: "Créer un rework avec origine SOUS-TRAITÉ", expected: "Rework créé avec statut PENDING_SUPPLIER" },
+        { action: "Vérifier le statut spécial", expected: "\"En attente fournisseur\" visible" },
+      ]},
+      { title: "Scénario A — Fournisseur accepte", steps: [
+        { action: "Mettre à jour la réponse fournisseur → ACCEPTED", expected: "Statut mis à jour" },
+        { action: "Le rework passe dans le pipeline", expected: "Job visible, suivi possible" },
+      ]},
+      { title: "Scénario B — Fournisseur refuse, on internalise", steps: [
+        { action: "Mettre à jour la réponse fournisseur → REFUSED", expected: "Statut mis à jour" },
+        { action: "Changer l'origine en INTERNE", expected: "Rework bascule dans le pipeline interne" },
+        { action: "Traiter comme un rework interne standard", expected: "Progression normale" },
+      ]},
+      { title: "Scénario C — Remboursement partiel fournisseur", steps: [
+        { action: "Mettre à jour → PARTIAL_REFUND", expected: "Statut mis à jour" },
+        { action: "Saisir le montant remboursé par le fournisseur", expected: "Montant enregistré" },
+        { action: "Décision admin : rembourser le client ou internaliser", expected: "Action choisie et exécutée" },
+      ]}
+    ]
+  },
+  {
+    id: "UF-22", title: "Consulter les statistiques rework", criticality: "🟡", depends: "UF-19",
+    prereq: "Avoir au moins quelques reworks complétés.",
+    sections: [
+      { title: null, steps: [
+        { action: "Aller dans Statistiques", expected: "Page chargée" },
+        { action: "Naviguer vers la section/onglet \"Rework\"", expected: "Section dédiée visible" },
+      ]},
+      { title: "KPIs globaux", steps: [
+        { action: "Vérifier le coût total rework", expected: "Montant en € affiché" },
+        { action: "Vérifier la ventilation matière vs port", expected: "Deux montants distincts" },
+        { action: "Vérifier le % coût rework / coût production total", expected: "Pourcentage affiché" },
+        { action: "Vérifier le nombre de reworks", expected: "Compteur affiché" },
+        { action: "Vérifier le taux de rework", expected: "% par rapport aux jobs totaux" },
+      ]},
+      { title: "Ventilations", steps: [
+        { action: "Vérifier le graphique par motif", expected: "Barres avec les motifs les plus fréquents" },
+        { action: "Vérifier le graphique par catégorie", expected: "Camembert Production / Logistique / Réclamation / Sous-traitance" },
+        { action: "Vérifier le top 5 motifs récurrents", expected: "Liste ordonnée" },
+      ]},
+      { title: "Alertes et détails", steps: [
+        { action: "Vérifier le temps moyen de résolution", expected: "Durée moyenne affichée" },
+        { action: "Vérifier les remboursements fournisseurs", expected: "Montant total crédité" },
+        { action: "Changer la période (semaine / mois / année)", expected: "Données recalculées" },
+      ]}
+    ]
+  },
+  {
+    id: "UF-23", title: "Rework facturable (erreur client)", criticality: "🟡", depends: "UF-19",
+    prereq: "Client signale une erreur de sa part (mauvais texte, mauvais logo).",
+    sections: [
+      { title: "Création du rework facturable", steps: [
+        { action: "Créer un rework avec motif CLIENT_ERROR", expected: "Champ de facturation apparaît" },
+        { action: "Sélectionner le mode de facturation (ex : PROCESSING_ONLY)", expected: "Mode sélectionné" },
+        { action: "Vérifier le montant calculé ou saisir un montant libre", expected: "Montant affiché en €" },
+        { action: "Créer le rework", expected: "Rework créé en statut PENDING_PAYMENT" },
+      ]},
+      { title: "Attente paiement", steps: [
+        { action: "Vérifier que le rework est en PENDING_PAYMENT", expected: "Statut visible, pas dans le pipeline tant que non payé" },
+        { action: "Vérifier qu'un lien de paiement a été envoyé au client", expected: "Email avec lien Stripe envoyé" },
+        { action: "Simuler le paiement (ou valider manuellement)", expected: "Rework passe en QUEUED et entre dans le pipeline" },
+      ]},
+      { title: "Cas geste commercial (gratuit)", steps: [
+        { action: "Créer un rework CLIENT_ERROR avec mode FREE", expected: "Rework entre directement dans le pipeline (pas de PENDING_PAYMENT)" },
+      ]},
+      { title: "Cas modification du design", steps: [
+        { action: "Si le client doit corriger son fichier : mettre en PENDING_FILES", expected: "Rework en attente des fichiers corrigés" },
+        { action: "Réception des fichiers → mettre à jour le design", expected: "Design corrigé via l'éditeur admin" },
+        { action: "Relancer le rework dans le pipeline", expected: "Rework passe en QUEUED" },
+      ]}
+    ]
+  }
+];
+
+// ===== STATE (Firebase Realtime) =====
+let state = {};
+let currentFilter = "all";
+let firebaseReady = false;
+let saveTimeout = null;
+
+// Listen for real-time changes from Firebase
+stateRef.on("value", (snapshot) => {
+  const data = snapshot.val();
+  state = data || {};
+  firebaseReady = true;
+  updateSyncStatus("connected");
+  render();
+});
+
+stateRef.on("child_changed", () => updateSyncStatus("connected"));
+
+// Handle connection state
+const connRef = db.ref(".info/connected");
+connRef.on("value", (snap) => {
+  updateSyncStatus(snap.val() ? "connected" : "offline");
+});
+
+function updateSyncStatus(status) {
+  const el = document.getElementById("syncStatus");
+  if (status === "connected") {
+    el.innerHTML = '<span style="color:#22c55e;">● Synchronisé en temps réel</span>';
+  } else if (status === "saving") {
+    el.innerHTML = '<span style="color:#f59e0b;">● Enregistrement...</span>';
+  } else {
+    el.innerHTML = '<span style="color:#ef4444;">● Hors ligne (données locales)</span>';
+  }
+}
+
+function saveState() {
+  // Debounce writes to avoid hammering Firebase on fast clicks
+  updateSyncStatus("saving");
+  if (saveTimeout) clearTimeout(saveTimeout);
+  saveTimeout = setTimeout(() => {
+    stateRef.set(state).then(() => {
+      updateSyncStatus("connected");
+    }).catch(() => {
+      // Fallback to localStorage if Firebase fails
+      localStorage.setItem("cardz-useflows-backup", JSON.stringify(state));
+      updateSyncStatus("offline");
+    });
+  }, 300);
+}
+
+function getStepKey(flowId, sectionIdx, stepIdx) {
+  return `${flowId}__${sectionIdx}__${stepIdx}`;
+}
+
+function getStepState(key) {
+  return state[key] || { status: "pending", note: "" };
+}
+
+function setStepStatus(key, status) {
+  if (!state[key]) state[key] = { status: "pending", note: "" };
+  state[key].status = state[key].status === status ? "pending" : status;
+  saveState();
+  render();
+}
+
+function setStepNote(key, note) {
+  if (!state[key]) state[key] = { status: "pending", note: "" };
+  state[key].note = note;
+  saveState();
+}
+
+// ===== RENDER =====
+function render() {
+  const app = document.getElementById("app");
+  let html = "";
+  let globalStepIdx = 0;
+
+  FLOWS.forEach((flow, fi) => {
+    const flowSteps = [];
+    flow.sections.forEach((sec, si) => {
+      sec.steps.forEach((step, sti) => {
+        flowSteps.push({ key: getStepKey(flow.id, si, sti), ...getStepState(getStepKey(flow.id, si, sti)) });
+      });
+    });
+
+    const total = flowSteps.length;
+    const ok = flowSteps.filter(s => s.status === "ok").length;
+    const fail = flowSteps.filter(s => s.status === "fail").length;
+    const partial = flowSteps.filter(s => s.status === "partial").length;
+    const pending = total - ok - fail - partial;
+
+    // Filter logic
+    if (currentFilter !== "all") {
+      const hasStatus = flowSteps.some(s => s.status === currentFilter) || (currentFilter === "pending" && pending > 0);
+      if (!hasStatus) return;
+    }
+
+    const isOpen = flow._open ? "open" : "";
+    const pct = total > 0 ? Math.round((ok / total) * 100) : 0;
+
+    html += `<div class="flow-card ${isOpen}" data-flow="${fi}">`;
+    html += `<div class="flow-header" onclick="toggleFlow(${fi})">`;
+    html += `<span class="flow-code">${flow.id}</span>`;
+    html += `<span class="flow-title">${flow.title}</span>`;
+    html += `<span class="flow-criticality">${flow.criticality}</span>`;
+    html += `<span class="flow-progress-mini">${ok}/${total} (${pct}%)</span>`;
+    html += `<span class="flow-chevron">▼</span>`;
+    html += `</div>`;
+
+    html += `<div class="flow-body">`;
+    if (flow.prereq) {
+      html += `<div class="flow-prereq"><strong>Pré-requis :</strong> ${flow.prereq} &nbsp; <strong>Dépend de :</strong> ${flow.depends}</div>`;
+    }
+
+    let stepCounter = 0;
+    flow.sections.forEach((sec, si) => {
+      if (sec.title) {
+        html += `<div class="step-section">${sec.title}</div>`;
+      }
+      sec.steps.forEach((step, sti) => {
+        stepCounter++;
+        const key = getStepKey(flow.id, si, sti);
+        const st = getStepState(key);
+        const statusClass = st.status !== "pending" ? `status-${st.status}` : "";
+        const showNote = st.status === "fail" || st.status === "partial" || st.note;
+
+        html += `<div class="step-row ${statusClass}">`;
+        html += `<div class="step-num">${stepCounter}</div>`;
+        html += `<div class="step-content">`;
+        html += `<div class="step-action">${step.action}</div>`;
+        html += `<div class="step-expected">${step.expected}</div>`;
+        html += `</div>`;
+        html += `<div class="step-controls">`;
+        html += `<button class="status-btn ${st.status==='ok'?'active-ok':''}" onclick="setStepStatus('${key}','ok')" title="Validé">✓</button>`;
+        html += `<button class="status-btn ${st.status==='partial'?'active-partial':''}" onclick="setStepStatus('${key}','partial')" title="Partiel">◐</button>`;
+        html += `<button class="status-btn ${st.status==='fail'?'active-fail':''}" onclick="setStepStatus('${key}','fail')" title="Bloqué">✗</button>`;
+        html += `</div>`;
+
+        if (showNote || st.status === "fail" || st.status === "partial") {
+          html += `<div class="step-note-area">`;
+          html += `<div class="step-note-label">Description du problème :</div>`;
+          html += `<textarea class="step-note" placeholder="Décrire le problème rencontré..." onblur="setStepNote('${key}', this.value)">${st.note || ''}</textarea>`;
+          html += `</div>`;
+        }
+
+        html += `</div>`;
+      });
+    });
+
+    html += `</div></div>`;
+  });
+
+  app.innerHTML = html;
+  updateProgress();
+}
+
+function updateProgress() {
+  let total = 0, ok = 0, fail = 0, partial = 0;
+  FLOWS.forEach(flow => {
+    flow.sections.forEach((sec, si) => {
+      sec.steps.forEach((step, sti) => {
+        total++;
+        const st = getStepState(getStepKey(flow.id, si, sti));
+        if (st.status === "ok") ok++;
+        else if (st.status === "fail") fail++;
+        else if (st.status === "partial") partial++;
+      });
+    });
+  });
+
+  const pending = total - ok - fail - partial;
+  const pctOk = (ok / total * 100).toFixed(1);
+  const pctFail = (fail / total * 100).toFixed(1);
+  const pctPartial = (partial / total * 100).toFixed(1);
+
+  document.getElementById("progressStats").innerHTML =
+    `<span><span class="dot dot-ok"></span> ${ok} validés (${pctOk}%)</span>` +
+    `<span><span class="dot dot-fail"></span> ${fail} bloqués</span>` +
+    `<span><span class="dot dot-partial"></span> ${partial} partiels</span>` +
+    `<span><span class="dot dot-pending"></span> ${pending} non testés</span>` +
+    `<span style="margin-left:auto;color:var(--brass);font-weight:600;">${total} étapes au total</span>`;
+
+  document.getElementById("progressBar").innerHTML =
+    `<div class="progress-segment ok" style="width:${pctOk}%"></div>` +
+    `<div class="progress-segment partial" style="width:${pctPartial}%"></div>` +
+    `<div class="progress-segment fail" style="width:${pctFail}%"></div>`;
+}
+
+function updateLastUpdated() {
+  // Now handled by sync status indicator
+}
+
+// ===== INTERACTIONS =====
+function toggleFlow(idx) {
+  FLOWS[idx]._open = !FLOWS[idx]._open;
+  render();
+}
+
+function expandAll() { FLOWS.forEach(f => f._open = true); render(); }
+function collapseAll() { FLOWS.forEach(f => f._open = false); render(); }
+
+function setFilter(filter, btn) {
+  currentFilter = filter;
+  document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  render();
+}
+
+// ===== EXPORT / IMPORT =====
+function exportState() {
+  const data = {
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    exportedBy: "CardzPrinter Use Flows",
+    state: state
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `use-flows-state-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast("État exporté avec succès");
+}
+
+function importState() {
+  document.getElementById("importInput").click();
+}
+
+function handleImport(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (data.state) {
+        Object.assign(state, data.state);
+        saveState();
+        render();
+        showToast(`État importé (${Object.keys(data.state).length} entrées) — synchronisé avec Firebase`);
+      }
+    } catch(err) {
+      showToast("Erreur : fichier JSON invalide");
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = "";
+}
+
+function resetAll() {
+  if (!confirm("Réinitialiser tous les statuts et notes pour TOUS les utilisateurs ? Cette action est irréversible.")) return;
+  state = {};
+  stateRef.set({}).then(() => {
+    render();
+    showToast("Tout a été réinitialisé (pour tous les utilisateurs)");
+  });
+}
+
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 3000);
+}
+
+// ===== INIT =====
+// Initial render with empty state; Firebase listener will re-render when data arrives
+render();
+</script>
+</body>
+</html>
