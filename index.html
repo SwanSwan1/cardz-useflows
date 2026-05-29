@@ -455,7 +455,7 @@ const FLOWS = [
     prereq: "Avoir au moins une commande en statut PAID.",
     sections: [
       { title: "Fiche commande", steps: [
-        { action: "Ouvrir une commande PAID", expected: "La fiche détail se charge avec toutes les sections" },
+        { action: "Ouvrir une commande PAID", expected: "La fiche détail se charge avec toutes les sections : Header (réf V2, statut, segment) · Bandeaux conditionnels (note client, legacy) · Dates clés · Traitement & Livraison · Articles & Facturation · Machine à états (transitions) · Recommandation d'expédition · Notes internes · Sidebar : Bloc Client, Adresses (+ bouton Copier), Contexte technique, Édition design · Actions : Remboursement, Annulation" },
         { action: "Vérifier le header", expected: "Référence V2 (CZ-2026-XXXXX), statut PAID (badge), segment client" },
         { action: "Vérifier si bandeau \"Note client\"", expected: "Si customerNote existe → bandeau ambré visible avec le texte" },
         { action: "Vérifier si bandeau \"Legacy\"", expected: "Si commande importée → bandeau pierre avec ref WooCommerce" },
