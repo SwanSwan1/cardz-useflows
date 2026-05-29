@@ -1086,6 +1086,12 @@ function setStepNote(key, note) {
   saveState();
 }
 
+function toggleNote(key) {
+  if (!state[key]) state[key] = { status: "pending", note: "" };
+  state[key]._noteOpen = !state[key]._noteOpen;
+  render();
+}
+
 // ===== RENDER =====
 function render() {
   const app = document.getElementById("app");
@@ -1139,7 +1145,9 @@ function render() {
         const key = getStepKey(flow.id, si, sti);
         const st = getStepState(key);
         const statusClass = st.status !== "pending" ? `status-${st.status}` : "";
-        const showNote = st.status === "fail" || st.status === "partial" || st.note;
+        const hasNote = st.note && st.note.trim().length > 0;
+        const noteLabel = st.status === "ok" ? "Commentaire :" : st.status === "pending" ? "Note :" : "Description du problème :";
+        const notePlaceholder = st.status === "ok" ? "Remarque, écart constaté, éléments supplémentaires trouvés..." : st.status === "pending" ? "Note préalable..." : "Décrire le problème rencontré...";
 
         html += `<div class="step-row ${statusClass}">`;
         html += `<div class="step-num">${stepCounter}</div>`;
@@ -1151,12 +1159,15 @@ function render() {
         html += `<button class="status-btn ${st.status==='ok'?'active-ok':''}" onclick="setStepStatus('${key}','ok')" title="Validé">✓</button>`;
         html += `<button class="status-btn ${st.status==='partial'?'active-partial':''}" onclick="setStepStatus('${key}','partial')" title="Partiel">◐</button>`;
         html += `<button class="status-btn ${st.status==='fail'?'active-fail':''}" onclick="setStepStatus('${key}','fail')" title="Bloqué">✗</button>`;
+        html += `<button class="status-btn" onclick="toggleNote('${key}')" title="Ajouter un commentaire" style="font-size:12px;${hasNote?'color:var(--blue);border-color:var(--blue);':''}">💬</button>`;
         html += `</div>`;
 
-        if (showNote || st.status === "fail" || st.status === "partial") {
+        // Show note if: has content, is open, or status is fail/partial
+        const noteOpen = st._noteOpen || hasNote || st.status === "fail" || st.status === "partial";
+        if (noteOpen) {
           html += `<div class="step-note-area">`;
-          html += `<div class="step-note-label">Description du problème :</div>`;
-          html += `<textarea class="step-note" placeholder="Décrire le problème rencontré..." onblur="setStepNote('${key}', this.value)">${st.note || ''}</textarea>`;
+          html += `<div class="step-note-label">${noteLabel}</div>`;
+          html += `<textarea class="step-note" placeholder="${notePlaceholder}" onblur="setStepNote('${key}', this.value)">${st.note || ''}</textarea>`;
           html += `</div>`;
         }
 
