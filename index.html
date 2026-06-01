@@ -473,20 +473,31 @@ const FLOWS = [
     id: "UF-01", title: "Accéder au Dashboard", criticality: "🔴", depends: "—",
     prereq: null,
     sections: [
-      { title: null, steps: [
+      { title: "Chargement et navigation", steps: [
         { action: "Naviguer vers /back-office", expected: "La page du dashboard se charge sans erreur" },
         { action: "Vérifier la sidebar gauche", expected: "Sidebar dark (navy) avec les liens : Tableau de bord, Commandes, Production, Catalogue, Clients, Messagerie, Stock, Codes Promo, Revendeurs, Paiements, Audit Wallet, Statistiques, Configuration, Utilisateurs, Aide. Vérifier aussi : nom utilisateur connecté en bas + lien Retour espace client" },
         { action: "Vérifier les badges sidebar", expected: "Badges numériques sur Commandes, Production, Clients, Messages, Stock (si données disponibles)" },
-        { action: "Vérifier le bloc \"Urgences\"", expected: "Nombre de commandes urgentes aujourd'hui / demain / en retard affiché" },
-        { action: "Vérifier le bloc \"CA\"", expected: "CA du jour, de la semaine, du mois avec deltas en %" },
-        { action: "Vérifier le bloc \"Commandes\"", expected: "Nombre de commandes par période (jour/semaine/mois/total)" },
-        { action: "Vérifier le bloc \"Monitoring stock\"", expected: "Alertes stock affichées si articles LOW/CRITICAL" },
-        { action: "Vérifier le graphique barres", expected: "Graphique des commandes par jour sur 14 jours visible" },
-        { action: "Vérifier les 5 dernières commandes", expected: "Liste cliquable des 5 dernières commandes" },
+      ]},
+      { title: "Dashboard Admin — Blocs business (visibles uniquement pour admin)", steps: [
+        { action: "Vérifier le bloc \"CA\"", expected: "CA du jour, de la semaine, du mois avec deltas en %. MASQUÉ pour les rôles operator et super-op" },
+        { action: "Vérifier le bloc \"Commandes\"", expected: "Nombre de commandes par période (jour/semaine/mois/total). MASQUÉ pour operator" },
+        { action: "Vérifier le graphique barres", expected: "Graphique des commandes par jour sur 14 jours. MASQUÉ pour operator" },
+        { action: "Vérifier les 5 dernières commandes", expected: "Liste cliquable des 5 dernières commandes. MASQUÉ pour operator" },
         { action: "Cliquer sur une commande récente", expected: "Navigation vers /back-office/commandes/[id]" },
-        { action: "Revenir au Dashboard (sidebar)", expected: "Retour au dashboard sans erreur" },
-        { action: "Vérifier les tickets ouverts", expected: "Liste des tickets NEW/OPEN affichée" },
-        { action: "Cliquer sur le bouton \"Reset données\"", expected: "Toutes les données se réinitialisent (seeds de démo)" },
+        { action: "Vérifier les tickets ouverts", expected: "Liste des tickets NEW/OPEN affichée. MASQUÉ pour operator" },
+      ]},
+      { title: "Dashboard Admin + Opérateur — Blocs opérationnels (visibles par tous)", steps: [
+        { action: "Vérifier le bloc \"Urgences\"", expected: "Nombre de commandes urgentes aujourd'hui / demain / en retard affiché. Visible par tous les rôles" },
+        { action: "Vérifier le bloc \"Mes jobs assignés\"", expected: "Liste des ProductionJobs assignés à l'utilisateur connecté, triés par échéance. Visible par tous les rôles" },
+        { action: "Vérifier le bloc \"Jobs production en attente\"", expected: "Nombre de jobs par étape (FILES_CHECK, PRINTING, etc.) en attente de traitement. Visible par tous les rôles" },
+        { action: "Vérifier le bloc \"Échéances du jour\"", expected: "Jobs dont le dueAt est aujourd'hui, triés par urgence. Visible par tous les rôles" },
+        { action: "Vérifier le bloc \"Monitoring stock\"", expected: "Alertes stock affichées si articles LOW/CRITICAL. Visible par tous les rôles" },
+        { action: "Vérifier le bloc \"Reworks en cours\"", expected: "Nombre de reworks actifs avec leur motif et échéance. Visible par tous les rôles" },
+      ]},
+      { title: "Test par rôle — Vérifier la séparation", steps: [
+        { action: "Se connecter en tant qu'admin", expected: "Dashboard complet : blocs business + blocs opérationnels" },
+        { action: "Se connecter en tant qu'opérateur", expected: "Dashboard réduit : UNIQUEMENT les blocs opérationnels (pas de CA, pas de graphiques, pas de commandes récentes, pas de tickets SAV). L'opérateur ne voit que ce dont il a besoin pour travailler" },
+        { action: "Vérifier que la sidebar est aussi filtrée pour l'opérateur", expected: "L'opérateur ne voit pas : Statistiques, Paiements, Audit Wallet, Configuration, Codes Promo. Il voit : Tableau de bord, Commandes (lecture), Production, Stock, Aide" },
       ]}
     ]
   },
