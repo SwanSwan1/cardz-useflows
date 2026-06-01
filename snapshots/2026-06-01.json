@@ -1,0 +1,110 @@
+{
+  "backups": {
+    "bk_1780328183375": {
+      "data": {
+        "UF-01__0__0": {
+          "note": "",
+          "status": "pending"
+        },
+        "UF-06__0__0": {
+          "note": "",
+          "status": "ok"
+        }
+      },
+      "date": "01/06/2026 17:36:23",
+      "entryCount": 2,
+      "timestamp": "2026-06-01T15:36:23.357Z"
+    },
+    "bk_1780328928302": {
+      "data": {
+        "UF-01__0__0": {
+          "note": "",
+          "status": "ok"
+        },
+        "UF-01__0__1": {
+          "note": "",
+          "status": "ok"
+        },
+        "UF-06__0__0": {
+          "note": "",
+          "status": "ok"
+        },
+        "UF-06__0__1": {
+          "note": "Sous-catégorie manquant",
+          "status": "partial"
+        },
+        "UF-06__0__2": {
+          "note": "",
+          "status": "ok"
+        },
+        "UF-06__0__3": {
+          "note": "Les textes de la page apparaissent devant l'image",
+          "status": "partial"
+        },
+        "UF-06__0__4": {
+          "note": "Les textes de la page apparaissent devant l'image",
+          "status": "partial"
+        },
+        "UF-06__0__5": {
+          "_noteOpen": true,
+          "note": "Cliquer dans le vide referme la fenêtre",
+          "status": "ok"
+        },
+        "UF-06__1__0": {
+          "note": "On peut ouvrir une fiche que en cliquant sur \"Fiche Produit\", pas d'accès en cliquant sur nom ou référence.",
+          "status": "partial"
+        },
+        "UF-06__1__1": {
+          "note": "On ne peux pas modifier le type ou catégorie après création. Lors de la création d'une référence, il semblerait que le type ne soit pas sauvegardé.",
+          "status": "partial"
+        }
+      },
+      "date": "01/06/2026 17:48:48",
+      "entryCount": 10,
+      "timestamp": "2026-06-01T15:48:48.289Z"
+    }
+  },
+  "state": {
+    "UF-01__0__0": {
+      "note": "",
+      "status": "ok"
+    },
+    "UF-01__0__1": {
+      "note": "",
+      "status": "ok"
+    },
+    "UF-06__0__0": {
+      "note": "",
+      "status": "ok"
+    },
+    "UF-06__0__1": {
+      "note": "Sous-catégorie manquant",
+      "status": "partial"
+    },
+    "UF-06__0__2": {
+      "note": "",
+      "status": "ok"
+    },
+    "UF-06__0__3": {
+      "note": "Les textes de la page apparaissent devant l'image",
+      "status": "partial"
+    },
+    "UF-06__0__4": {
+      "note": "Les textes de la page apparaissent devant l'image",
+      "status": "partial"
+    },
+    "UF-06__0__5": {
+      "_noteOpen": true,
+      "note": "Cliquer dans le vide referme la fenêtre",
+      "status": "ok"
+    },
+    "UF-06__1__0": {
+      "note": "On peut ouvrir une fiche que en cliquant sur \"Fiche Produit\", pas d'accès en cliquant sur nom ou référence.",
+      "status": "partial"
+    },
+    "UF-06__1__1": {
+      "note": "On ne peux pas modifier le type ou catégorie après création. Lors de la création d'une référence, il semblerait que le type ne soit pas sauvegardé.",
+      "status": "partial"
+    }
+  }
+}
