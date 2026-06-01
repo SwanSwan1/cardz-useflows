@@ -424,6 +424,8 @@
     <button onclick="collapseAll()">Tout fermer</button>
     <button class="btn-primary" onclick="exportState()">Exporter l'état (JSON)</button>
     <button onclick="importState()">Importer un état</button>
+    <button onclick="listBackups()">Sauvegardes</button>
+    <button onclick="createBackup(); showToast('Sauvegarde manuelle créée')">Sauvegarder maintenant</button>
   </div>
 </div>
 
@@ -1382,21 +1384,97 @@ function handleImport(event) {
   event.target.value = "";
 }
 
-function resetAll() {
-  if (!confirm("Réinitialiser tous les statuts et notes pour TOUS les utilisateurs ? Cette action est irréversible.")) return;
-  state = {};
-  stateRef.set({}).then(() => {
-    render();
-    showToast("Tout a été réinitialisé (pour tous les utilisateurs)");
-  });
-}
-
 function showToast(msg) {
   const t = document.getElementById("toast");
   t.textContent = msg;
   t.classList.add("show");
   setTimeout(() => t.classList.remove("show"), 3000);
 }
+
+// ===== AUTO-BACKUP =====
+const backupsRef = db.ref("useflows/backups");
+const BACKUP_INTERVAL = 60 * 60 * 1000; // 1 heure
+const MAX_BACKUPS = 10;
+
+function createBackup() {
+  // Ne sauvegarder que s'il y a des données
+  const keys = Object.keys(state).filter(k => !k.startsWith("_"));
+  if (keys.length < 2) return;
+
+  const backup = {
+    timestamp: new Date().toISOString(),
+    date: new Date().toLocaleString("fr-FR"),
+    entryCount: keys.length,
+    data: JSON.parse(JSON.stringify(state))
+  };
+
+  backupsRef.once("value").then((snapshot) => {
+    const existing = snapshot.val() || {};
+    const backupKeys = Object.keys(existing).sort();
+
+    // Supprimer les plus anciennes si > MAX_BACKUPS
+    while (backupKeys.length >= MAX_BACKUPS) {
+      const oldest = backupKeys.shift();
+      backupsRef.child(oldest).remove();
+    }
+
+    // Créer la nouvelle sauvegarde
+    const backupId = "bk_" + Date.now();
+    backupsRef.child(backupId).set(backup).then(() => {
+      console.log("[Backup] Sauvegarde créée :", backup.date, "-", backup.entryCount, "entrées");
+    });
+  });
+}
+
+// Sauvegarde immédiate au chargement (si données présentes), puis toutes les heures
+stateRef.once("value").then(() => {
+  setTimeout(() => createBackup(), 5000); // 5s après le chargement initial
+  setInterval(createBackup, BACKUP_INTERVAL);
+});
+
+// ===== RESTORE FROM BACKUP =====
+function listBackups() {
+  backupsRef.once("value").then((snapshot) => {
+    const backups = snapshot.val();
+    if (!backups || Object.keys(backups).length === 0) {
+      showToast("Aucune sauvegarde disponible");
+      return;
+    }
+
+    const entries = Object.entries(backups).sort((a, b) => b[1].timestamp.localeCompare(a[1].timestamp));
+    let msg = "Sauvegardes disponibles :\n\n";
+    entries.forEach(([id, bk], i) => {
+      msg += `${i + 1}. ${bk.date} — ${bk.entryCount} entrées\n`;
+    });
+    msg += "\nPour restaurer, ouvrez la console du navigateur (F12) et tapez :\nrestoreBackup(1)  ← numéro de la sauvegarde";
+
+    alert(msg);
+  });
+}
+
+// Fonction accessible depuis la console du navigateur
+window.restoreBackup = function(num) {
+  backupsRef.once("value").then((snapshot) => {
+    const backups = snapshot.val();
+    if (!backups) { console.log("Aucune sauvegarde"); return; }
+
+    const entries = Object.entries(backups).sort((a, b) => b[1].timestamp.localeCompare(a[1].timestamp));
+    if (num < 1 || num > entries.length) { console.log("Numéro invalide. Disponibles : 1 à", entries.length); return; }
+
+    const [id, backup] = entries[num - 1];
+    if (!confirm(`Restaurer la sauvegarde du ${backup.date} (${backup.entryCount} entrées) ? L'état actuel sera écrasé.`)) return;
+
+    // Sauvegarder l'état actuel avant restauration
+    createBackup();
+
+    state = backup.data;
+    stateRef.set(state).then(() => {
+      render();
+      showToast(`Sauvegarde du ${backup.date} restaurée (${backup.entryCount} entrées)`);
+      console.log("[Restore] Restauration effectuée :", backup.date);
+    });
+  });
+};
 
 // ===== INIT =====
 // Initial render with empty state; Firebase listener will re-render when data arrives
