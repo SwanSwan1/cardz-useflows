@@ -1,0 +1,539 @@
+{
+  "backups": {
+    "bk_1780328183375": {
+      "data": {
+        "UF-01__0__0": {
+          "note": "",
+          "status": "pending"
+        },
+        "UF-06__0__0": {
+          "note": "",
+          "status": "ok"
+        }
+      },
+      "date": "01/06/2026 17:36:23",
+      "entryCount": 2,
+      "timestamp": "2026-06-01T15:36:23.357Z"
+    },
+    "bk_1780328928302": {
+      "data": {
+        "UF-01__0__0": {
+          "note": "",
+          "status": "ok"
+        },
+        "UF-01__0__1": {
+          "note": "",
+          "status": "ok"
+        },
+        "UF-06__0__0": {
+          "note": "",
+          "status": "ok"
+        },
+        "UF-06__0__1": {
+          "note": "Sous-catégorie manquant",
+          "status": "partial"
+        },
+        "UF-06__0__2": {
+          "note": "",
+          "status": "ok"
+        },
+        "UF-06__0__3": {
+          "note": "Les textes de la page apparaissent devant l'image",
+          "status": "partial"
+        },
+        "UF-06__0__4": {
+          "note": "Les textes de la page apparaissent devant l'image",
+          "status": "partial"
+        },
+        "UF-06__0__5": {
+          "_noteOpen": true,
+          "note": "Cliquer dans le vide referme la fenêtre",
+          "status": "ok"
+        },
+        "UF-06__1__0": {
+          "note": "On peut ouvrir une fiche que en cliquant sur \"Fiche Produit\", pas d'accès en cliquant sur nom ou référence.",
+          "status": "partial"
+        },
+        "UF-06__1__1": {
+          "note": "On ne peux pas modifier le type ou catégorie après création. Lors de la création d'une référence, il semblerait que le type ne soit pas sauvegardé.",
+          "status": "partial"
+        }
+      },
+      "date": "01/06/2026 17:48:48",
+      "entryCount": 10,
+      "timestamp": "2026-06-01T15:48:48.289Z"
+    },
+    "bk_1780329720363": {
+      "data": {
+        "UF-01__0__0": {
+          "note": "",
+          "status": "ok"
+        },
+        "UF-01__0__1": {
+          "note": "",
+          "status": "ok"
+        },
+        "UF-01__0__10": {
+          "note": "",
+          "status": "ok"
+        },
+        "UF-01__0__11": {
+          "note": "On peut consulter la liste des derniers tickets via le bloc \"Activite recente\" mais on ne peut pas cliquer sur les tickets pour les consulter.\nUn bloc \"Ticket ouverts\" séparément serait probablement mieux (pas noyé dans les autres activités du site)",
+          "status": "partial"
+        },
+        "UF-01__0__2": {
+          "note": "Pas de badges pour l'instant sur : Commandes production, clients , messages\nStock, ça fonctionne.",
+          "status": "partial"
+        },
+        "UF-01__0__3": {
+          "note": "Demain est manquant",
+          "status": "partial"
+        },
+        "UF-01__0__4": {
+          "note": "Tous les chiffres sont à Zero pour l'instant",
+          "status": "partial"
+        },
+        "UF-01__0__5": {
+          "note": "Bloc absent",
+          "status": "fail"
+        },
+        "UF-01__0__6": {
+          "note": "Le bloc s'appelle \"Alertes opérationnelles\" au lieu de \"Monitoring Stock\"\nDonnée fictives low et critique, probablement pas connecté à la base de donnée",
+          "status": "partial"
+        },
+        "UF-01__0__7": {
+          "_noteOpen": true,
+          "note": "Présent mais pas de donnée affichées pas sûr que cela fonctionne",
+          "status": "partial"
+        },
+        "UF-01__0__8": {
+          "note": "",
+          "status": "ok"
+        },
+        "UF-01__0__9": {
+          "note": "",
+          "status": "ok"
+        },
+        "UF-06__0__0": {
+          "note": "",
+          "status": "ok"
+        },
+        "UF-06__0__1": {
+          "note": "Sous-catégorie manquant",
+          "status": "partial"
+        },
+        "UF-06__0__2": {
+          "note": "",
+          "status": "ok"
+        },
+        "UF-06__0__3": {
+          "note": "Les textes de la page apparaissent devant l'image",
+          "status": "partial"
+        },
+        "UF-06__0__4": {
+          "note": "Les textes de la page apparaissent devant l'image",
+          "status": "partial"
+        },
+        "UF-06__0__5": {
+          "_noteOpen": true,
+          "note": "Cliquer dans le vide referme la fenêtre",
+          "status": "ok"
+        },
+        "UF-06__1__0": {
+          "note": "On peut ouvrir une fiche que en cliquant sur \"Fiche Produit\", pas d'accès en cliquant sur nom ou référence.",
+          "status": "partial"
+        },
+        "UF-06__1__1": {
+          "note": "On ne peux pas modifier le type ou catégorie après création. Lors de la création d'une référence, il semblerait que le type ne soit pas sauvegardé.",
+          "status": "partial"
+        }
+      },
+      "date": "01/06/2026 18:02:00",
+      "entryCount": 20,
+      "timestamp": "2026-06-01T16:02:00.345Z"
+    },
+    "bk_1780331778536": {
+      "data": {
+        "UF-01__0__0": {
+          "note": "",
+          "status": "ok"
+        },
+        "UF-01__0__1": {
+          "note": "",
+          "status": "ok"
+        },
+        "UF-01__0__10": {
+          "note": "",
+          "status": "ok"
+        },
+        "UF-01__0__11": {
+          "note": "On peut consulter la liste des derniers tickets via le bloc \"Activite recente\" mais on ne peut pas cliquer sur les tickets pour les consulter.\nUn bloc \"Ticket ouverts\" séparément serait probablement mieux (pas noyé dans les autres activités du site)",
+          "status": "partial"
+        },
+        "UF-01__0__12": {
+          "_noteOpen": true,
+          "note": "Message de confirmation puis actualisation qui semble effective (pas de message d'erreur)",
+          "status": "partial"
+        },
+        "UF-01__0__2": {
+          "note": "Pas de badges pour l'instant sur : Commandes production, clients , messages\nStock, ça fonctionne.",
+          "status": "partial"
+        },
+        "UF-01__0__3": {
+          "note": "Demain est manquant",
+          "status": "partial"
+        },
+        "UF-01__0__4": {
+          "note": "Tous les chiffres sont à Zero pour l'instant",
+          "status": "partial"
+        },
+        "UF-01__0__5": {
+          "note": "Bloc absent",
+          "status": "fail"
+        },
+        "UF-01__0__6": {
+          "note": "Le bloc s'appelle \"Alertes opérationnelles\" au lieu de \"Monitoring Stock\"\nDonnée fictives low et critique, probablement pas connecté à la base de donnée",
+          "status": "partial"
+        },
+        "UF-01__0__7": {
+          "_noteOpen": true,
+          "note": "Présent mais pas de donnée affichées pas sûr que cela fonctionne",
+          "status": "partial"
+        },
+        "UF-01__0__8": {
+          "note": "",
+          "status": "ok"
+        },
+        "UF-01__0__9": {
+          "note": "",
+          "status": "ok"
+        },
+        "UF-06__0__0": {
+          "note": "",
+          "status": "ok"
+        },
+        "UF-06__0__1": {
+          "note": "Sous-catégorie manquant",
+          "status": "partial"
+        },
+        "UF-06__0__2": {
+          "note": "",
+          "status": "ok"
+        },
+        "UF-06__0__3": {
+          "note": "Les textes de la page apparaissent devant l'image",
+          "status": "partial"
+        },
+        "UF-06__0__4": {
+          "note": "Les textes de la page apparaissent devant l'image",
+          "status": "partial"
+        },
+        "UF-06__0__5": {
+          "_noteOpen": true,
+          "note": "Cliquer dans le vide referme la fenêtre",
+          "status": "ok"
+        },
+        "UF-06__1__0": {
+          "note": "On peut ouvrir une fiche que en cliquant sur \"Fiche Produit\", pas d'accès en cliquant sur nom ou référence.",
+          "status": "partial"
+        },
+        "UF-06__1__1": {
+          "note": "On ne peux pas modifier le type ou catégorie après création. Lors de la création d'une référence, il semblerait que le type ne soit pas sauvegardé.",
+          "status": "partial"
+        },
+        "_flownote_UF-01": {
+          "note": "Bonus bloc segmentation comportementale"
+        }
+      },
+      "date": "01/06/2026 18:36:18",
+      "entryCount": 21,
+      "timestamp": "2026-06-01T16:36:18.521Z"
+    },
+    "bk_1780384764588": {
+      "data": {
+        "UF-01__0__0": {
+          "note": "",
+          "status": "ok"
+        },
+        "UF-01__0__1": {
+          "note": "",
+          "status": "ok"
+        },
+        "UF-01__0__10": {
+          "note": "",
+          "status": "ok"
+        },
+        "UF-01__0__11": {
+          "note": "On peut consulter la liste des derniers tickets via le bloc \"Activite recente\" mais on ne peut pas cliquer sur les tickets pour les consulter.\nUn bloc \"Ticket ouverts\" séparément serait probablement mieux (pas noyé dans les autres activités du site)",
+          "status": "partial"
+        },
+        "UF-01__0__12": {
+          "_noteOpen": true,
+          "note": "Message de confirmation puis actualisation qui semble effective (pas de message d'erreur)",
+          "status": "partial"
+        },
+        "UF-01__0__2": {
+          "note": "Pas de badges pour l'instant sur : Commandes production, clients , messages\nStock, ça fonctionne.",
+          "status": "partial"
+        },
+        "UF-01__0__3": {
+          "note": "Demain est manquant",
+          "status": "partial"
+        },
+        "UF-01__0__4": {
+          "note": "Tous les chiffres sont à Zero pour l'instant",
+          "status": "partial"
+        },
+        "UF-01__0__5": {
+          "note": "Bloc absent",
+          "status": "fail"
+        },
+        "UF-01__0__6": {
+          "note": "Le bloc s'appelle \"Alertes opérationnelles\" au lieu de \"Monitoring Stock\"\nDonnée fictives low et critique, probablement pas connecté à la base de donnée",
+          "status": "partial"
+        },
+        "UF-01__0__7": {
+          "_noteOpen": true,
+          "note": "Présent mais pas de donnée affichées pas sûr que cela fonctionne",
+          "status": "partial"
+        },
+        "UF-01__0__8": {
+          "note": "",
+          "status": "ok"
+        },
+        "UF-01__0__9": {
+          "note": "",
+          "status": "ok"
+        },
+        "UF-06__0__0": {
+          "note": "",
+          "status": "ok"
+        },
+        "UF-06__0__1": {
+          "note": "Sous-catégorie manquant",
+          "status": "partial"
+        },
+        "UF-06__0__2": {
+          "note": "",
+          "status": "ok"
+        },
+        "UF-06__0__3": {
+          "note": "Les textes de la page apparaissent devant l'image",
+          "status": "partial"
+        },
+        "UF-06__0__4": {
+          "note": "Les textes de la page apparaissent devant l'image",
+          "status": "partial"
+        },
+        "UF-06__0__5": {
+          "_noteOpen": true,
+          "note": "Cliquer dans le vide referme la fenêtre",
+          "status": "ok"
+        },
+        "UF-06__1__0": {
+          "note": "On peut ouvrir une fiche que en cliquant sur \"Fiche Produit\", pas d'accès en cliquant sur nom ou référence.",
+          "status": "partial"
+        },
+        "UF-06__1__1": {
+          "note": "On ne peux pas modifier le type ou catégorie après création. Lors de la création d'une référence, il semblerait que le type ne soit pas sauvegardé.",
+          "status": "partial"
+        },
+        "_flownote_UF-01": {
+          "note": "Bonus bloc segmentation comportementale"
+        }
+      },
+      "date": "02/06/2026 09:19:20",
+      "entryCount": 21,
+      "timestamp": "2026-06-02T07:19:20.984Z"
+    },
+    "bk_1780384970349": {
+      "data": {
+        "UF-01__0__0": {
+          "note": "",
+          "status": "ok"
+        },
+        "UF-01__0__1": {
+          "note": "",
+          "status": "ok"
+        },
+        "UF-01__0__10": {
+          "note": "",
+          "status": "ok"
+        },
+        "UF-01__0__11": {
+          "note": "On peut consulter la liste des derniers tickets via le bloc \"Activite recente\" mais on ne peut pas cliquer sur les tickets pour les consulter.\nUn bloc \"Ticket ouverts\" séparément serait probablement mieux (pas noyé dans les autres activités du site)",
+          "status": "partial"
+        },
+        "UF-01__0__12": {
+          "_noteOpen": true,
+          "note": "Message de confirmation puis actualisation qui semble effective (pas de message d'erreur)",
+          "status": "partial"
+        },
+        "UF-01__0__2": {
+          "note": "Pas de badges pour l'instant sur : Commandes production, clients , messages\nStock, ça fonctionne.",
+          "status": "partial"
+        },
+        "UF-01__0__3": {
+          "note": "Demain est manquant",
+          "status": "partial"
+        },
+        "UF-01__0__4": {
+          "note": "Tous les chiffres sont à Zero pour l'instant",
+          "status": "partial"
+        },
+        "UF-01__0__5": {
+          "note": "Bloc absent",
+          "status": "fail"
+        },
+        "UF-01__0__6": {
+          "note": "Le bloc s'appelle \"Alertes opérationnelles\" au lieu de \"Monitoring Stock\"\nDonnée fictives low et critique, probablement pas connecté à la base de donnée",
+          "status": "partial"
+        },
+        "UF-01__0__7": {
+          "_noteOpen": true,
+          "note": "Présent mais pas de donnée affichées pas sûr que cela fonctionne",
+          "status": "partial"
+        },
+        "UF-01__0__8": {
+          "note": "",
+          "status": "ok"
+        },
+        "UF-01__0__9": {
+          "note": "",
+          "status": "ok"
+        },
+        "UF-06__0__0": {
+          "note": "",
+          "status": "ok"
+        },
+        "UF-06__0__1": {
+          "note": "Sous-catégorie manquant",
+          "status": "partial"
+        },
+        "UF-06__0__2": {
+          "note": "",
+          "status": "ok"
+        },
+        "UF-06__0__3": {
+          "note": "Les textes de la page apparaissent devant l'image",
+          "status": "partial"
+        },
+        "UF-06__0__4": {
+          "note": "Les textes de la page apparaissent devant l'image",
+          "status": "partial"
+        },
+        "UF-06__0__5": {
+          "_noteOpen": true,
+          "note": "Cliquer dans le vide referme la fenêtre",
+          "status": "ok"
+        },
+        "UF-06__1__0": {
+          "note": "On peut ouvrir une fiche que en cliquant sur \"Fiche Produit\", pas d'accès en cliquant sur nom ou référence.",
+          "status": "partial"
+        },
+        "UF-06__1__1": {
+          "note": "On ne peux pas modifier le type ou catégorie après création. Lors de la création d'une référence, il semblerait que le type ne soit pas sauvegardé.",
+          "status": "partial"
+        },
+        "_flownote_UF-01": {
+          "note": "Bonus bloc segmentation comportementale"
+        }
+      },
+      "date": "02/06/2026 09:22:50",
+      "entryCount": 21,
+      "timestamp": "2026-06-02T07:22:50.333Z"
+    }
+  },
+  "state": {
+    "UF-01__0__0": {
+      "note": "",
+      "status": "ok"
+    },
+    "UF-01__0__1": {
+      "note": "",
+      "status": "ok"
+    },
+    "UF-01__0__10": {
+      "note": "",
+      "status": "ok"
+    },
+    "UF-01__0__11": {
+      "note": "On peut consulter la liste des derniers tickets via le bloc \"Activite recente\" mais on ne peut pas cliquer sur les tickets pour les consulter.\nUn bloc \"Ticket ouverts\" séparément serait probablement mieux (pas noyé dans les autres activités du site)",
+      "status": "partial"
+    },
+    "UF-01__0__12": {
+      "_noteOpen": true,
+      "note": "Message de confirmation puis actualisation qui semble effective (pas de message d'erreur)",
+      "status": "partial"
+    },
+    "UF-01__0__2": {
+      "note": "Pas de badges pour l'instant sur : Commandes production, clients , messages\nStock, ça fonctionne.",
+      "status": "partial"
+    },
+    "UF-01__0__3": {
+      "note": "Demain est manquant",
+      "status": "partial"
+    },
+    "UF-01__0__4": {
+      "note": "Tous les chiffres sont à Zero pour l'instant",
+      "status": "partial"
+    },
+    "UF-01__0__5": {
+      "note": "Bloc absent",
+      "status": "fail"
+    },
+    "UF-01__0__6": {
+      "note": "Le bloc s'appelle \"Alertes opérationnelles\" au lieu de \"Monitoring Stock\"\nDonnée fictives low et critique, probablement pas connecté à la base de donnée",
+      "status": "partial"
+    },
+    "UF-01__0__7": {
+      "_noteOpen": true,
+      "note": "Présent mais pas de donnée affichées pas sûr que cela fonctionne",
+      "status": "partial"
+    },
+    "UF-01__0__8": {
+      "note": "",
+      "status": "ok"
+    },
+    "UF-01__0__9": {
+      "note": "",
+      "status": "ok"
+    },
+    "UF-06__0__0": {
+      "note": "",
+      "status": "ok"
+    },
+    "UF-06__0__1": {
+      "note": "Sous-catégorie manquant",
+      "status": "partial"
+    },
+    "UF-06__0__2": {
+      "note": "",
+      "status": "ok"
+    },
+    "UF-06__0__3": {
+      "note": "Les textes de la page apparaissent devant l'image",
+      "status": "partial"
+    },
+    "UF-06__0__4": {
+      "note": "Les textes de la page apparaissent devant l'image",
+      "status": "partial"
+    },
+    "UF-06__0__5": {
+      "_noteOpen": true,
+      "note": "Cliquer dans le vide referme la fenêtre",
+      "status": "ok"
+    },
+    "UF-06__1__0": {
+      "note": "On peut ouvrir une fiche que en cliquant sur \"Fiche Produit\", pas d'accès en cliquant sur nom ou référence.",
+      "status": "partial"
+    },
+    "UF-06__1__1": {
+      "note": "On ne peux pas modifier le type ou catégorie après création. Lors de la création d'une référence, il semblerait que le type ne soit pas sauvegardé.",
+      "status": "partial"
+    },
+    "_flownote_UF-01": {
+      "note": "Bonus bloc segmentation comportementale"
+    }
+  }
+}
