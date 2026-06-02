@@ -300,6 +300,177 @@
   .step-row.status-ok { background: var(--green-bg); }
   .step-row.status-fail { background: var(--red-bg); }
   .step-row.status-partial { background: var(--orange-bg); }
+  .step-row.status-fixed { background: var(--blue-bg); }
+
+  .status-btn.active-fixed { border-color: var(--blue); background: var(--blue-bg); }
+  .dot-fixed { background: var(--blue); }
+
+  /* Thread / discussion */
+  .thread {
+    grid-column: 1 / -1;
+    margin-top: 6px;
+    border: 1px solid var(--gray-border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .thread-msg {
+    padding: 8px 12px;
+    font-size: 13px;
+    line-height: 1.5;
+    border-bottom: 1px solid #f3f4f6;
+  }
+  .thread-msg:last-of-type { border-bottom: none; }
+  .thread-msg.role-swanny {
+    background: #fef9ee;
+    border-left: 3px solid var(--brass);
+  }
+  .thread-msg.role-dev {
+    background: #eef6ff;
+    border-left: 3px solid var(--blue);
+  }
+  .thread-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3px;
+  }
+  .thread-author {
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .thread-author.role-swanny { color: #92700a; }
+  .thread-author.role-dev { color: var(--blue); }
+  .thread-time {
+    font-size: 10px;
+    color: var(--gray);
+  }
+  .thread-text {
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .thread-actions {
+    padding: 6px 12px;
+    background: #fafafa;
+    display: flex;
+    gap: 6px;
+    align-items: stretch;
+  }
+  .thread-input {
+    flex: 1;
+    border: 1px solid var(--gray-border);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 13px;
+    font-family: inherit;
+    resize: none;
+    min-height: 36px;
+    max-height: 120px;
+  }
+  .thread-input:focus { outline: none; border-color: var(--brass); }
+  .thread-send {
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: none;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .thread-send.role-swanny {
+    background: var(--brass);
+    color: white;
+  }
+  .thread-send.role-dev {
+    background: var(--blue);
+    color: white;
+  }
+  .thread-toggle {
+    grid-column: 1 / -1;
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--blue);
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 2px 0;
+    text-align: left;
+  }
+  .thread-toggle:hover { text-decoration: underline; }
+  .thread-count {
+    font-size: 11px;
+    color: var(--gray);
+    margin-left: 4px;
+  }
+
+  /* User picker */
+  .user-picker {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+  }
+  .user-picker-box {
+    background: white;
+    border-radius: 12px;
+    padding: 32px;
+    text-align: center;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+    max-width: 360px;
+  }
+  .user-picker-box h2 {
+    margin-bottom: 8px;
+    color: var(--navy);
+    font-size: 18px;
+  }
+  .user-picker-box p {
+    margin-bottom: 20px;
+    color: var(--gray);
+    font-size: 14px;
+  }
+  .user-picker-btn {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    border: 2px solid var(--gray-border);
+    background: white;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .user-picker-btn:hover { transform: scale(1.02); }
+  .user-picker-btn.swanny {
+    border-color: var(--brass);
+    color: #92700a;
+  }
+  .user-picker-btn.swanny:hover { background: #fef9ee; }
+  .user-picker-btn.dev {
+    border-color: var(--blue);
+    color: var(--blue);
+  }
+  .user-picker-btn.dev:hover { background: #eef6ff; }
+  .current-user-badge {
+    font-size: 12px;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .current-user-badge.role-swanny {
+    background: #fef9ee;
+    color: #92700a;
+    border: 1px solid var(--brass);
+  }
+  .current-user-badge.role-dev {
+    background: #eef6ff;
+    color: var(--blue);
+    border: 1px solid var(--blue);
+  }
 
   /* Flow general notes */
   .flow-notes {
@@ -417,7 +588,10 @@
       <h1>Use Flows — Back-Office CardzPrinter V3</h1>
       <div class="header-sub">Parcours fonctionnels interactifs — Cliquer sur un flow pour l'ouvrir, marquer chaque étape</div>
     </div>
-    <div class="last-updated" id="lastUpdated"></div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span id="currentUserBadge" class="current-user-badge" onclick="showUserPicker()" title="Cliquer pour changer d'utilisateur"></span>
+      <div class="last-updated" id="lastUpdated"></div>
+    </div>
   </div>
   <div class="header-actions">
     <button onclick="expandAll()">Tout ouvrir</button>
@@ -441,10 +615,19 @@
   <button class="filter-btn" data-filter="ok" onclick="setFilter('ok', this)"><span class="dot dot-ok"></span> Validé</button>
   <button class="filter-btn" data-filter="fail" onclick="setFilter('fail', this)"><span class="dot dot-fail"></span> Bloqué</button>
   <button class="filter-btn" data-filter="partial" onclick="setFilter('partial', this)"><span class="dot dot-partial"></span> Partiel</button>
+  <button class="filter-btn" data-filter="fixed" onclick="setFilter('fixed', this)"><span class="dot dot-fixed"></span> Corrigé (à re-vérifier)</button>
 </div>
 
 <div class="main" id="app"></div>
 
+<div id="userPicker" class="user-picker" style="display:none">
+  <div class="user-picker-box">
+    <h2>Qui êtes-vous ?</h2>
+    <p>Votre identité sera affichée sur vos messages et actions.</p>
+    <button class="user-picker-btn swanny" onclick="setCurrentUser('swanny')">Swanny (Décideur)</button>
+    <button class="user-picker-btn dev" onclick="setCurrentUser('dev')">Développeur</button>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 <div id="syncStatus" style="position:fixed;bottom:24px;left:24px;font-size:11px;color:#9ca3af;z-index:1000;"></div>
 <input type="file" id="importInput" accept=".json" style="display:none" onchange="handleImport(event)">
@@ -1110,6 +1293,36 @@ const FLOWS = [
   }
 ];
 
+// ===== USER IDENTITY =====
+let currentUser = localStorage.getItem("cardz-useflows-user") || null;
+
+function showUserPicker() {
+  document.getElementById("userPicker").style.display = "flex";
+}
+
+function setCurrentUser(role) {
+  currentUser = role;
+  localStorage.setItem("cardz-useflows-user", role);
+  document.getElementById("userPicker").style.display = "none";
+  updateUserBadge();
+  render();
+}
+
+function updateUserBadge() {
+  const el = document.getElementById("currentUserBadge");
+  if (!currentUser) { el.innerHTML = ""; return; }
+  const label = currentUser === "swanny" ? "Swanny" : "Développeur";
+  el.className = `current-user-badge role-${currentUser}`;
+  el.textContent = label;
+}
+
+// Show picker on first visit
+if (!currentUser) {
+  setTimeout(() => showUserPicker(), 500);
+} else {
+  updateUserBadge();
+}
+
 // ===== STATE (Firebase Realtime) =====
 let state = {};
 let currentFilter = "all";
@@ -1197,6 +1410,37 @@ function setFlowNote(flowId, note) {
   saveState();
 }
 
+// ===== THREAD MESSAGES =====
+function getThread(key) {
+  const st = state[key];
+  return (st && st.thread) || [];
+}
+
+function addThreadMessage(key) {
+  if (!currentUser) { showUserPicker(); return; }
+  const input = document.getElementById(`thread-input-${key}`);
+  if (!input || !input.value.trim()) return;
+
+  if (!state[key]) state[key] = { status: "pending", note: "" };
+  if (!state[key].thread) state[key].thread = [];
+
+  state[key].thread.push({
+    author: currentUser,
+    text: input.value.trim(),
+    time: new Date().toISOString()
+  });
+
+  state[key]._threadOpen = true;
+  saveState();
+  render();
+}
+
+function toggleThread(key) {
+  if (!state[key]) state[key] = { status: "pending", note: "" };
+  state[key]._threadOpen = !state[key]._threadOpen;
+  render();
+}
+
 // ===== RENDER =====
 function render() {
   const app = document.getElementById("app");
@@ -1215,7 +1459,8 @@ function render() {
     const ok = flowSteps.filter(s => s.status === "ok").length;
     const fail = flowSteps.filter(s => s.status === "fail").length;
     const partial = flowSteps.filter(s => s.status === "partial").length;
-    const pending = total - ok - fail - partial;
+    const fixed = flowSteps.filter(s => s.status === "fixed").length;
+    const pending = total - ok - fail - partial - fixed;
 
     // Filter logic
     if (currentFilter !== "all") {
@@ -1264,6 +1509,9 @@ function render() {
         const st = getStepState(key);
         const statusClass = st.status !== "pending" ? `status-${st.status}` : "";
         const hasNote = st.note && st.note.trim().length > 0;
+        const thread = getThread(key);
+        const hasThread = thread.length > 0;
+        const threadOpen = st._threadOpen || false;
         const noteLabel = st.status === "ok" ? "Commentaire :" : st.status === "pending" ? "Note :" : "Description du problème :";
         const notePlaceholder = st.status === "ok" ? "Remarque, écart constaté, éléments supplémentaires trouvés..." : st.status === "pending" ? "Note préalable..." : "Décrire le problème rencontré...";
 
@@ -1277,7 +1525,8 @@ function render() {
         html += `<button class="status-btn ${st.status==='ok'?'active-ok':''}" onclick="setStepStatus('${key}','ok')" title="Validé">✓</button>`;
         html += `<button class="status-btn ${st.status==='partial'?'active-partial':''}" onclick="setStepStatus('${key}','partial')" title="Partiel">◐</button>`;
         html += `<button class="status-btn ${st.status==='fail'?'active-fail':''}" onclick="setStepStatus('${key}','fail')" title="Bloqué">✗</button>`;
-        html += `<button class="status-btn" onclick="toggleNote('${key}')" title="Ajouter un commentaire" style="font-size:12px;${hasNote?'color:var(--blue);border-color:var(--blue);':''}">💬</button>`;
+        html += `<button class="status-btn ${st.status==='fixed'?'active-fixed':''}" onclick="setStepStatus('${key}','fixed')" title="Corrigé par le dev — à re-vérifier">🔧</button>`;
+        html += `<button class="status-btn" onclick="toggleNote('${key}')" title="Ajouter un commentaire" style="font-size:12px;${hasNote?'color:var(--blue);border-color:var(--blue);':''}">📝</button>`;
         html += `</div>`;
 
         // Show note if: has content, is open, or status is fail/partial
@@ -1286,6 +1535,32 @@ function render() {
           html += `<div class="step-note-area">`;
           html += `<div class="step-note-label">${noteLabel}</div>`;
           html += `<textarea class="step-note" placeholder="${notePlaceholder}" onblur="setStepNote('${key}', this.value)">${st.note || ''}</textarea>`;
+          html += `</div>`;
+        }
+
+        // Thread toggle button
+        html += `<button class="thread-toggle" onclick="toggleThread('${key}')">`;
+        html += threadOpen ? '▾ Masquer la discussion' : '▸ Discussion';
+        if (hasThread) html += `<span class="thread-count">(${thread.length} message${thread.length>1?'s':''})</span>`;
+        html += `</button>`;
+
+        // Thread messages
+        if (threadOpen) {
+          html += `<div class="thread">`;
+          thread.forEach(msg => {
+            const role = msg.author === "swanny" ? "swanny" : "dev";
+            const authorLabel = msg.author === "swanny" ? "Swanny" : "Développeur";
+            const time = new Date(msg.time).toLocaleString("fr-FR", { day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit" });
+            html += `<div class="thread-msg role-${role}">`;
+            html += `<div class="thread-meta"><span class="thread-author role-${role}">${authorLabel}</span><span class="thread-time">${time}</span></div>`;
+            html += `<div class="thread-text">${msg.text.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>`;
+            html += `</div>`;
+          });
+          const inputRole = currentUser || "swanny";
+          html += `<div class="thread-actions">`;
+          html += `<textarea class="thread-input" id="thread-input-${key}" placeholder="Répondre..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();addThreadMessage('${key}');}"></textarea>`;
+          html += `<button class="thread-send role-${inputRole}" onclick="addThreadMessage('${key}')">Envoyer</button>`;
+          html += `</div>`;
           html += `</div>`;
         }
 
@@ -1301,7 +1576,7 @@ function render() {
 }
 
 function updateProgress() {
-  let total = 0, ok = 0, fail = 0, partial = 0;
+  let total = 0, ok = 0, fail = 0, partial = 0, fixed = 0;
   FLOWS.forEach(flow => {
     flow.sections.forEach((sec, si) => {
       sec.steps.forEach((step, sti) => {
@@ -1310,25 +1585,29 @@ function updateProgress() {
         if (st.status === "ok") ok++;
         else if (st.status === "fail") fail++;
         else if (st.status === "partial") partial++;
+        else if (st.status === "fixed") fixed++;
       });
     });
   });
 
-  const pending = total - ok - fail - partial;
+  const pending = total - ok - fail - partial - fixed;
   const pctOk = (ok / total * 100).toFixed(1);
   const pctFail = (fail / total * 100).toFixed(1);
   const pctPartial = (partial / total * 100).toFixed(1);
+  const pctFixed = (fixed / total * 100).toFixed(1);
 
   document.getElementById("progressStats").innerHTML =
     `<span><span class="dot dot-ok"></span> ${ok} validés (${pctOk}%)</span>` +
     `<span><span class="dot dot-fail"></span> ${fail} bloqués</span>` +
     `<span><span class="dot dot-partial"></span> ${partial} partiels</span>` +
+    `<span><span class="dot dot-fixed"></span> ${fixed} corrigés</span>` +
     `<span><span class="dot dot-pending"></span> ${pending} non testés</span>` +
     `<span style="margin-left:auto;color:var(--brass);font-weight:600;">${total} étapes au total</span>`;
 
   document.getElementById("progressBar").innerHTML =
     `<div class="progress-segment ok" style="width:${pctOk}%"></div>` +
     `<div class="progress-segment partial" style="width:${pctPartial}%"></div>` +
+    `<div class="progress-segment" style="width:${pctFixed}%;background:var(--blue);"></div>` +
     `<div class="progress-segment fail" style="width:${pctFail}%"></div>`;
 }
 
