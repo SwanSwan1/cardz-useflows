@@ -928,6 +928,16 @@ const FLOWS = [
       ]},
       { title: "Fiche client — Onglet Tracking", steps: [
         { action: "Aller à l'onglet \"Tracking\"", expected: "Source d'acquisition, UTM, device, events, sessions visibles" },
+      ]},
+      { title: "Se connecter en tant que client (impersonation)", steps: [
+        { action: "Depuis la fiche client, cliquer le bouton \"Se connecter en tant que client\"", expected: "Bouton visible (admin uniquement). Redirection vers le front-end en mode impersonation" },
+        { action: "Vérifier le bandeau d'impersonation", expected: "Un bandeau bien visible en haut du site indique que l'on est connecté en tant que [Nom du client] avec un bouton pour revenir au back-office" },
+        { action: "Vérifier que le site affiche les données du client", expected: "Espace client du client affiché : ses commandes, ses designs, son profil, son wallet, ses adresses" },
+        { action: "Vérifier la tarification selon le segment du client", expected: "Les prix affichés correspondent au segment du client (particulier = prix public, pro = prix pro, revendeur = prix revendeur)" },
+        { action: "Vérifier l'accès à l'éditeur", expected: "L'éditeur fonctionne avec les droits et les designs du client" },
+        { action: "Vérifier qu'on ne peut PAS passer de commande en mode impersonation", expected: "Le bouton de commande est désactivé ou un message indique que la commande n'est pas possible en mode impersonation (sécurité)" },
+        { action: "Cliquer \"Retour au back-office\" dans le bandeau", expected: "Retour au back-office, déconnexion du mode impersonation, retour à la session admin" },
+        { action: "Vérifier que la session admin est intacte", expected: "On est bien reconnecté en tant qu'admin, pas de perte de session" },
       ]}
     ]
   },
