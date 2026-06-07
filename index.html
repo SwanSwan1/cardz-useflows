@@ -1002,20 +1002,67 @@ const FLOWS = [
     ]
   },
   {
-    id: "UF-12", title: "Gérer le catalogue (templates)", criticality: "🟡", depends: "UF-01",
-    prereq: null,
+    id: "UF-12", title: "Gérer le catalogue (modèles & supports)", criticality: "🔴", depends: "UF-01, UF-06",
+    prereq: "Avoir au moins un support créé dans Stock (UF-06). Comprendre la relation : Prix final = prix support + surcoût modèle.",
     sections: [
-      { title: null, steps: [
+      { title: "Liste du catalogue", steps: [
         { action: "Cliquer \"Catalogue\" dans la sidebar", expected: "Page /back-office/catalogue se charge" },
-        { action: "Vérifier les colonnes", expected: "Image, nom, catégorie, support, prix de base, visibilité" },
-        { action: "Vérifier le nombre de templates", expected: "~939 templates listés (avec pagination)" },
-        { action: "Toggle visibilité d'un template", expected: "Le template passe visible → masqué (ou inversement)" },
-        { action: "Cliquer sur un template", expected: "Page /back-office/catalogue/[sku] se charge" },
-        { action: "Vérifier les informations", expected: "Nom, catégorie, support, prix, visibilité, SEO metadata" },
+        { action: "Vérifier les colonnes", expected: "Image aperçu, nom du modèle, catégorie, supports compatibles (nombre ou liste), surcoût modèle, visibilité (publié/masqué)" },
+        { action: "Vérifier les filtres", expected: "Filtrer par catégorie, par support compatible, par visibilité, recherche textuelle" },
+        { action: "Vérifier la pagination", expected: "Pagination fonctionnelle si > 1 page" },
+      ]},
+      { title: "Créer un nouveau modèle — Métadonnées", steps: [
+        { action: "Cliquer \"Nouveau modèle\"", expected: "Formulaire de création s'ouvre" },
+        { action: "Renseigner le nom du modèle", expected: "Champ texte, obligatoire" },
+        { action: "Renseigner la description", expected: "Champ texte long" },
+        { action: "Sélectionner la catégorie", expected: "Dropdown : cartes de visite, cartes PVC, cartes NFC, CD, badges, vCardz, tablettes" },
+        { action: "Renseigner le surcoût du modèle (si premium/partenaire)", expected: "Champ numérique en €, défaut 0 (gratuit). Ex : 2€ pour un modèle premium, 3€ pour un modèle partenaire" },
+        { action: "Sélectionner l'auteur", expected: "Interne (CardzPrinter) ou Partenaire (sélection dans la liste)" },
+        { action: "Ajouter des tags", expected: "Tags pour le référencement interne et la recherche" },
+      ]},
+      { title: "Créer un nouveau modèle — Face recto", steps: [
+        { action: "Accéder à la section \"Face recto\"", expected: "Zone d'édition de la face recto" },
+        { action: "Importer l'image de fond", expected: "Upload d'image (PNG, JPEG, PSD). L'image s'affiche comme fond du canvas aux dimensions CR80 (86×54mm)" },
+        { action: "Ajouter une zone de texte", expected: "Zone de texte positionnée avec : coordonnées (x, y), dimensions (largeur, hauteur), police par défaut, taille, couleur, texte placeholder" },
+        { action: "Ajouter plusieurs zones de texte", expected: "Chaque zone est indépendante avec ses propres paramètres (nom, prénom, fonction, téléphone, email, etc.)" },
+        { action: "Ajouter une zone photo/upload", expected: "Zone rectangulaire où le client pourra déposer sa photo. Position, dimensions, forme (rectangle/cercle/arrondi)" },
+        { action: "Ajouter une zone logo", expected: "Zone pour le logo client. Position, dimensions" },
+        { action: "Vérifier le rendu visuel", expected: "Aperçu du modèle recto avec toutes les zones positionnées" },
+      ]},
+      { title: "Créer un nouveau modèle — Face verso", steps: [
+        { action: "Accéder à la section \"Face verso\"", expected: "Zone d'édition du verso (optionnel — certains modèles n'ont qu'un recto)" },
+        { action: "Importer l'image de fond verso", expected: "Upload comme pour le recto" },
+        { action: "Ajouter les zones de texte, photo, logo", expected: "Même workflow que le recto" },
+        { action: "Vérifier le rendu visuel verso", expected: "Aperçu du verso avec toutes les zones" },
+      ]},
+      { title: "Créer un nouveau modèle — Supports compatibles", steps: [
+        { action: "Accéder à la section \"Supports compatibles\"", expected: "Liste des supports disponibles (issus du Stock) avec multi-select" },
+        { action: "Cocher les supports compatibles avec ce modèle", expected: "Ex : PVC Blanc ✓, PVC Transparent ✓, NFC NTAG216 ✓. Le prix de base de chaque support est affiché à côté" },
+        { action: "Vérifier le calcul du prix affiché", expected: "Pour chaque support coché : prix support + surcoût modèle = prix final. Ex : PVC Blanc 5€ + modèle premium 2€ = 7€" },
+        { action: "Vérifier qu'au moins un support est sélectionné", expected: "Impossible de publier sans au moins un support compatible" },
+      ]},
+      { title: "Créer un nouveau modèle — Aperçu & SEO", steps: [
+        { action: "Uploader les images d'aperçu", expected: "Image recto et verso pour l'affichage dans le catalogue et les fiches produit" },
+        { action: "Renseigner le titre SEO", expected: "Champ texte, pré-rempli à partir du nom du modèle" },
+        { action: "Renseigner la description SEO", expected: "Champ texte, pour le référencement" },
+        { action: "Renseigner les mots-clés SEO", expected: "Tags SEO" },
+      ]},
+      { title: "Publier le modèle", steps: [
+        { action: "Cliquer \"Publier\"", expected: "Modèle visible dans la liste du catalogue avec statut 'Publié'" },
+        { action: "Vérifier sur le front-end", expected: "Le modèle apparaît dans le catalogue client, avec les supports compatibles et le prix calculé" },
+      ]},
+      { title: "Modifier un modèle existant", steps: [
+        { action: "Cliquer sur un modèle dans la liste", expected: "Page détail du modèle avec toutes les sections éditables" },
         { action: "Modifier le nom", expected: "Sauvegardé" },
-        { action: "Modifier le prix", expected: "Sauvegardé" },
+        { action: "Modifier le surcoût", expected: "Sauvegardé, prix recalculé pour tous les supports compatibles" },
+        { action: "Ajouter/retirer un support compatible", expected: "Mise à jour immédiate de la liste des supports" },
+        { action: "Modifier les zones (texte, photo, logo) du recto ou verso", expected: "Zones repositionnées/redimensionnées, sauvegardé" },
         { action: "Modifier les metadata SEO", expected: "Sauvegardé" },
-        { action: "Toggle visibilité depuis le détail", expected: "Fonctionne" },
+        { action: "Toggle visibilité (publier/masquer)", expected: "Le modèle disparaît/réapparaît du catalogue client" },
+      ]},
+      { title: "Modèle vierge (support nu)", steps: [
+        { action: "Vérifier qu'un modèle vierge existe pour chaque support", expected: "Chaque support a automatiquement un modèle \"Vierge\" associé (sans fond, sans zones prédéfinies). Le client part de zéro" },
+        { action: "Vérifier qu'on ne peut pas supprimer un modèle vierge", expected: "Les modèles vierges sont auto-générés et non supprimables" },
       ]}
     ]
   },
