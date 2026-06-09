@@ -688,19 +688,32 @@ const FLOWS = [
     id: "UF-02", title: "Consulter la liste des commandes", criticality: "🔴", depends: "UF-01",
     prereq: null,
     sections: [
-      { title: null, steps: [
+      { title: "Affichage et navigation", steps: [
         { action: "Cliquer \"Commandes\" dans la sidebar", expected: "Page /back-office/commandes se charge" },
         { action: "Vérifier les colonnes", expected: "Référence, client, segment, statut, délai, date, montant TTC visibles" },
+        { action: "Vérifier la pagination", expected: "Si > 1 page, la pagination fonctionne" },
+        { action: "Cliquer sur une ligne de commande", expected: "Navigation vers /back-office/commandes/[id]" },
+      ]},
+      { title: "Filtres standard", steps: [
         { action: "Filtrer par statut \"PAID\"", expected: "Seules les commandes payées s'affichent" },
         { action: "Retirer le filtre statut", expected: "Toutes les commandes réapparaissent" },
         { action: "Filtrer par segment \"pro\"", expected: "Seules les commandes pro s'affichent" },
+        { action: "Filtrer par segment \"administration\"", expected: "Seules les commandes du segment Administration s'affichent (tous statuts Chorus confondus)" },
         { action: "Filtrer par délai \"urgent\"", expected: "Seules les commandes urgentes s'affichent" },
         { action: "Retirer tous les filtres", expected: "Liste complète restaurée" },
         { action: "Utiliser la recherche textuelle", expected: "Taper une référence ou un nom client → résultats filtrés" },
+      ]},
+      { title: "Tri", steps: [
         { action: "Trier par date (clic colonne)", expected: "Ordre ascendant/descendant alterne" },
         { action: "Trier par montant", expected: "Tri par montant fonctionne" },
-        { action: "Vérifier la pagination", expected: "Si > 1 page, la pagination fonctionne" },
-        { action: "Cliquer sur une ligne de commande", expected: "Navigation vers /back-office/commandes/[id]" },
+      ]},
+      { title: "Filtre Administration (séparé)", steps: [
+        { action: "Vérifier qu'un filtre \"Administration\" existe (séparé du filtre statut classique)", expected: "Filtre dédié visible, distinct du filtre \"en attente de paiement\" standard" },
+        { action: "Activer le filtre Administration", expected: "Affiche uniquement les commandes du segment Administration avec leurs statuts Chorus" },
+        { action: "Vérifier les sous-filtres Chorus", expected: "Possibilité de filtrer par sous-statut : AWAITING_PO, PO_RECEIVED, CONFIRMED, INVOICED_CHORUS, PENDING_CHORUS" },
+        { action: "Vérifier que les commandes Administration en PENDING_CHORUS n'apparaissent PAS dans le filtre standard \"en attente de paiement\"", expected: "Le filtre \"en attente de paiement\" classique ne montre que les commandes CB/PayPal en attente, pas les commandes Chorus" },
+        { action: "Vérifier les badges de statut Chorus", expected: "Les statuts Chorus ont une couleur distincte (ex : violet/bleu) pour les différencier visuellement des statuts classiques" },
+        { action: "Vérifier la date limite de paiement Chorus", expected: "Pour les commandes en PENDING_CHORUS, la date limite de paiement (dépôt + 30j) est visible. En rouge si dépassée." },
       ]}
     ]
   },
